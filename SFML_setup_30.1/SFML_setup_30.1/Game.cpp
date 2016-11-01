@@ -1,14 +1,14 @@
 #include "Game.h"
 
 #include <sstream>
-#include "AnimatedSprite.h"
 
+Game::Game() :myWorld(b2Vec2(0.0f,0.0f))
+{
+}
 
 void Game::run()
 {
-
 	//----Main Menu------------------//
-
 	MainMenu *main_menu = new MainMenu;
 
 	//------Screen setup------//
@@ -33,83 +33,67 @@ void Game::run()
 	begin_of_game = 0;
 	_game_state = Game::showing_splash;
 
-	gameloop(window, view, main_menu);
-}
+	//----Init
+	//myWorld.Step(1.0f / 60.0f, 8, 4);
 
-//-----Game_loop-----//
-void Game::gameloop(sf::RenderWindow *window, sf::View *view, MainMenu *main_menu)
-{
-	//---creating box2d world---//
-	// Define the gravity vector.
-	b2Vec2 gravity(0.0f, 0.0f);
-
-	// Construct a world object, which will hold and simulate the rigid bodies.
-	b2World world(gravity);
-	//world.Step(1.0f / 60.0f, 8, 4);
-
-	sf::Texture BoxTexture;
-	BoxTexture.loadFromFile("box.png");
+	boxTexture.loadFromFile("box.png");
 	//--------------------------//
 
 	//---death_image--//
-	sf::Texture image;
-	if (image.loadFromFile("game_over.png") != true)
+	if (deathImage.loadFromFile("game_over.png") != true)
 	{
 		return;
 	}
 
-	sf::Sprite game_over_sprite(image);
+	game_over_sprite.setTexture(deathImage);
 	//---after_death_timer---//
 	time_passed_after_death = 60 * 10;
 
 	score = 0;
 
 	//---cooldownbar---//
-	sf::Texture cooldown_texture;
 	if (cooldown_texture.loadFromFile("life_bar_back.png") != true)
 	{
 		return;
 	}
 
-	sf::Sprite cooldown_sprite(cooldown_texture);
+	cooldown_sprite.setTexture(cooldown_texture);
 
-	sf::Texture cooldown_texture_back;
 	if (cooldown_texture_back.loadFromFile("box.png") != true)
 	{
 		return;
 	}
 
-	sf::Sprite cooldown_sprite_back(cooldown_texture_back);
+	cooldown_sprite_back.setTexture(cooldown_texture_back);
 
 	//---player_life_bar---//
-
-	sf::Texture player_healtbar_texture;
 	if (player_healtbar_texture.loadFromFile("box.png") != true)
 	{
 		return;
 	}
 
-	sf::Sprite player_healtbar_sprite(player_healtbar_texture);
+	player_healtbar_sprite.setTexture(player_healtbar_texture);
 
-	sf::Texture player_healtbar_texture_backround;
 	if (player_healtbar_texture_backround.loadFromFile("life_bar_back.png") != true)
 	{
 		return;
 	}
 
-	sf::Sprite player_healtbar__backround_sprite(player_healtbar_texture_backround);
+	player_healtbar__backround_sprite.setTexture(player_healtbar_texture_backround);
 
 
 	//---------Contact Listener-----------------//
 	ContactListener = new MyContactListener();
-	world.SetContactListener(ContactListener);
+	myWorld.SetContactListener(ContactListener);
 
-	//---player_b2_body---//
-	float SCALE = 30.f;
+	//----Scale
+	SCALE = 30.f;
+
+	//---player_b2_body---//	
 	b2BodyDef BodyDef;
 	//BodyDef.position = b2Vec2(2048.0f / SCALE, (screen_height / 2) / SCALE);
 	BodyDef.type = b2_dynamicBody;
-	b2Body* player_body = world.CreateBody(&BodyDef);
+	b2Body* player_body = myWorld.CreateBody(&BodyDef);
 
 	b2PolygonShape Shape;
 	Shape.SetAsBox((31.f) / SCALE, (66.f) / SCALE);
@@ -133,7 +117,7 @@ void Game::gameloop(sf::RenderWindow *window, sf::View *view, MainMenu *main_men
 	Shape2.SetAsBox((31.f) / SCALE, (66.f) / SCALE);
 
 	b2FixtureDef FixtureDef2;
-	b2Body* enemy_body1 = world.CreateBody(&BodyDef2);
+	b2Body* enemy_body1 = myWorld.CreateBody(&BodyDef2);
 	FixtureDef2.density = 10.f;
 	FixtureDef2.friction = 0.7f;
 	FixtureDef2.shape = &Shape2;
@@ -149,12 +133,12 @@ void Game::gameloop(sf::RenderWindow *window, sf::View *view, MainMenu *main_men
 	Tank_turret turret("tank_tower", 45, 1.4, 200);
 	Tank_hull hull2("tank_hull", 0.6, 0.2, 1, 9, 1, 38000, 165);
 	Tank_turret turret2("tank_tower", 45, 1.2, 250);
-	Player *player = new Player(player_body, &hull, &turret, 0, 0, 0, 0, 0, 0, 0, 0);
-	Enemy *enemy1 = new Enemy(enemy_body1, &hull2, &turret2, 0, 0, 0, 0, 0, 0, 0, 0);
+	player = new Player(player_body, &hull, &turret, 0, 0, 0, 0, 0, 0, 0, 0);
+	enemy1 = new Enemy(enemy_body1, &hull2, &turret2, 0, 0, 0, 0, 0, 0, 0, 0);
 	o_manager.add_object(player);
 	o_manager.add_object(enemy1);
 
-	AiManager *ai_manager = new AiManager();
+	ai_manager = new AiManager();
 
 	//----Hit_Explosion_Animation----//
 	sf::Texture animtexture;
@@ -168,9 +152,11 @@ void Game::gameloop(sf::RenderWindow *window, sf::View *view, MainMenu *main_men
 		explosion.addFrame(sf::IntRect(i * 256, 0, 256, 256));
 	}
 
-	Animation* currentAnimation = &explosion;
+	currentAnimation = &explosion;
 
-	AnimatedSprite animatedSprite(sf::seconds(0.05f), true, false);
+	animatedSprite.setFrameTime(sf::seconds(0.05f));
+	animatedSprite.pause();
+	animatedSprite.setLooped(false);
 	animatedSprite.setOrigin(128, 128);
 	//----Animation----//
 
@@ -186,9 +172,11 @@ void Game::gameloop(sf::RenderWindow *window, sf::View *view, MainMenu *main_men
 		explosion2.addFrame(sf::IntRect(i * 512, 0, 512, 512));
 	}
 
-	Animation* currentAnimation2 = &explosion2;
+	currentAnimation2 = &explosion2;
 
-	AnimatedSprite animatedSprite2(sf::seconds(0.03f), true, false);
+	animatedSprite2.setFrameTime(sf::seconds(0.03f));
+	animatedSprite2.pause();
+	animatedSprite2.setLooped(false);
 	//----Animation----//
 
 	//----Shooting_Animation----//
@@ -203,20 +191,18 @@ void Game::gameloop(sf::RenderWindow *window, sf::View *view, MainMenu *main_men
 		explosion3.addFrame(sf::IntRect(i * 256, 0, 256, 256));
 	}
 
-	Animation* currentAnimation3 = &explosion3;
-
-	AnimatedSprite animatedSprite3(sf::seconds(0.03f), true, false);
+	currentAnimation3 = &explosion3;
+	animatedSprite3.setFrameTime(sf::seconds(0.03f));
+	animatedSprite3.pause();
+	animatedSprite3.setLooped(false);
 	animatedSprite3.setOrigin(128, 128);
 
-	//enemy_animations
-	Animation* currentAnimation4 = &explosion3;
+	gameloop(window, view, main_menu);
+}
 
-	AnimatedSprite animatedSprite4(sf::seconds(0.03f), true, false);
-	animatedSprite4.setOrigin(128, 128);
-	//----Animation----//
-
-	sf::Clock clock;
-
+//-----Game_loop-----//
+void Game::gameloop(sf::RenderWindow *window, sf::View *view, MainMenu *main_menu)
+{
 	while (!is_exiting())
 	{
 		sf::Event event;
@@ -246,7 +232,7 @@ void Game::gameloop(sf::RenderWindow *window, sf::View *view, MainMenu *main_men
 			sf::Time elapsed = clock.restart();
 			set_view(view, player);
 
-			world.Step(1.0f / 60.0f, 8, 4);
+			myWorld.Step(1.0f / 60.0f, 8, 4);
 
 
 			//-----------------Firing Main Gun--------------------------------------//
@@ -265,7 +251,7 @@ void Game::gameloop(sf::RenderWindow *window, sf::View *view, MainMenu *main_men
 					ammoBodyDef.type = b2_kinematicBody;
 					ammoBodyDef.bullet = true;
 
-					ammo_body = world.CreateBody(&ammoBodyDef);
+					ammo_body = myWorld.CreateBody(&ammoBodyDef);
 
 					b2PolygonShape shape_ammo;
 					shape_ammo.SetAsBox((10.f) / SCALE, (5.f) / SCALE);
@@ -404,13 +390,12 @@ void Game::gameloop(sf::RenderWindow *window, sf::View *view, MainMenu *main_men
 			//--------------------------------------------------------------------------//
 
 			//-----------------------Go through ammo and delete-----------------------------------------------//
-
 			std::vector<Ammo*>::iterator it = ammo_vector.begin();
 			while (it != ammo_vector.end())
 			{
 				if ((*it)->get_timer() <= 0)
 				{
-					world.DestroyBody((*it)->get_ammo_body());
+					myWorld.DestroyBody((*it)->get_ammo_body());
 					it = ammo_vector.erase(it);
 				}
 				else
