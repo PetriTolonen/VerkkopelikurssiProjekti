@@ -15,6 +15,8 @@
 #include <atomic>
 #include <string>
 
+#include "Box2D.h"
+
 struct client
 {
 	struct sockaddr_in si_other;
