@@ -92,8 +92,6 @@ private:
 	AiManager *ai_manager;
 
 	Player *player;
-	Enemy *enemy1;
-
 	sf::Clock clock;
 	float SCALE;
 };

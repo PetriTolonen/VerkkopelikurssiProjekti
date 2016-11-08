@@ -168,12 +168,6 @@
     <ClCompile Include="ContactChecker.cpp">
       <Filter>Resource Files</Filter>
     </ClCompile>
-    <ClCompile Include="Object.cpp">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ObjectManager.cpp">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
     <ClCompile Include="Player.cpp">
       <Filter>Resource Files</Filter>
     </ClCompile>
@@ -327,12 +321,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ContactChecker.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Object.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ObjectManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Player.h">

@@ -7,7 +7,7 @@ Player::Player(b2Body* player_body, Tank_hull* t, Tank_turret* tt, float msf, fl
 	this->tt = tt;
 	turret_rotation_speed = tt->get_traverse_speed();
 	hull_rotation_speed = t->get_traverse_speed();
-	
+
 	momentary_speed_forward = msf;
 	momentary_max_speed_backward = msb;
 	momentary_acceleration_forward = maf;
@@ -36,90 +36,80 @@ void Player::on_update(sf::Event event, sf::RenderWindow* win)
 {
 	if (health > 0)
 	{
-	////----turret_to_mouse----//
+		////----turret_to_mouse----//
 
-	sf::Vector2i pixel_pos = sf::Mouse::getPosition(*win);
-	sf::Vector2f coord_pos = win->mapPixelToCoords(pixel_pos);
+		sf::Vector2i pixel_pos = sf::Mouse::getPosition(*win);
+		sf::Vector2f coord_pos = win->mapPixelToCoords(pixel_pos);
 
-	float dx = x - coord_pos.x;
-	float dy = y - coord_pos.y;
-	float rotation = (atan2(dy, dx)) * 180 / M_PI;
+		float dx = x - coord_pos.x;
+		float dy = y - coord_pos.y;
+		float rotation = (atan2(dy, dx)) * 180 / M_PI;
 
-	float rotation2 = (rotation + 180) - tt->get_rotation();
+		float rotation2 = (rotation + 180) - tt->get_rotation();
 
-	if (rotation2 < 0)
-	{
-		rotation2 += 360;
-	}
-	
-	//If tank turret close to mouse rotation set exactly to mouse rotation
-	if (rotation2 < 180 + 0.6 && rotation2 > 180 - 0.6)
-	{
-		tt->get_sprite().setRotation(rotation);
-	}
-	else
-	{
-		if (rotation2 >180)
+		if (rotation2 < 0)
 		{
+			rotation2 += 360;
+		}
+
+		//If tank turret close to mouse rotation set exactly to mouse rotation
+		if (rotation2 < 180 + 0.6 && rotation2 > 180 - 0.6)
+		{
+			tt->get_sprite().setRotation(rotation);
+		}
+		else
+		{
+			if (rotation2 > 180)
+			{
 				tt->get_sprite().rotate(tt->get_traverse_speed() * 10 * _elapsed);
 
-		}
-		if (rotation2 <180)
-		{
+			}
+			if (rotation2 < 180)
+			{
 				tt->get_sprite().rotate(-tt->get_traverse_speed() * 10 * _elapsed);
-		}		
-	}
+			}
+		}
 
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
-	{
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+		{
 			momentary_acceleration_forward = t->get_acceleration_forward();
 			momentary_max_speed_forward = t->get_max_speed_forward();
 			momentary_speed_forward += _elapsed *momentary_acceleration_forward; //_elapsed
 
 
 
-		if (momentary_speed_forward > momentary_max_speed_forward)
+			if (momentary_speed_forward > momentary_max_speed_forward)
+			{
+				momentary_speed_forward = momentary_max_speed_forward;
+			}
+
+			player_body->SetLinearVelocity(b2Vec2(sin(player_body->GetAngle())*-momentary_speed_forward, cos(player_body->GetAngle())*momentary_speed_forward));
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
 		{
-			momentary_speed_forward = momentary_max_speed_forward;
+			momentary_acceleration_backward = tank_hull.get_acceleration_backward();
+			momentary_max_speed_backward = tank_hull.get_max_speed_backward();
+			momentary_speed_backward += _elapsed * momentary_acceleration_backward;
+
+			if (momentary_speed_backward > momentary_max_speed_backward)
+			{
+				momentary_speed_backward = momentary_max_speed_backward;
+			}
+			player_body->SetLinearVelocity(b2Vec2(sin(player_body->GetAngle())*momentary_speed_backward, cos(player_body->GetAngle())*-momentary_speed_backward));
 		}
 
-		player_body->SetLinearVelocity(b2Vec2(sin(player_body->GetAngle())*-momentary_speed_forward, cos(player_body->GetAngle())*momentary_speed_forward));		
-	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-	{
-		momentary_acceleration_backward = tank_hull.get_acceleration_backward();
-		momentary_max_speed_backward = tank_hull.get_max_speed_backward();
-		momentary_speed_backward += _elapsed * momentary_acceleration_backward;
 
-		if (momentary_speed_backward > momentary_max_speed_backward)
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
 		{
-			momentary_speed_backward = momentary_max_speed_backward;
+			player_body->SetAngularVelocity(hull_rotation_speed);
 		}
-		player_body->SetLinearVelocity(b2Vec2(sin(player_body->GetAngle())*momentary_speed_backward, cos(player_body->GetAngle())*-momentary_speed_backward));		
-	}
 
-
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-	{
-		player_body->SetAngularVelocity(hull_rotation_speed);
-	}
-
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-	{
-		player_body->SetAngularVelocity(-hull_rotation_speed);
-
-	}
-	
-		//---Distance travelled.---//
-		if (player_body->GetPosition().y*30.0 > distance_traveled.y)
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
 		{
-			distance_traveled.y = player_body->GetPosition().y*30.0;
+			player_body->SetAngularVelocity(-hull_rotation_speed);
+
 		}
-		if (player_body->GetPosition().x*30.0 > 0 + (1920 / 2) && player_body->GetPosition().x*30.0 < 4096.f - (1920 / 2))
-		{
-			distance_traveled.x = player_body->GetPosition().x*30.0;
-		}
-	}	
+	}
 	//---Setting_sprite_postion---//
 	set_position(player_body->GetPosition().x, player_body->GetPosition().y);
 	//----------------------------//
@@ -137,7 +127,7 @@ void Player::set_position(float x, float y)
 
 	t->set_position(this->x, this->y);
 	tt->set_position(this->x, this->y);
-	
+
 }
 
 float Player::rotate(float rotation_speed)
@@ -174,7 +164,7 @@ float Player::get_rotation()
 }
 
 sf::Vector2f Player::get_distance_traveled()
-{ 
+{
 	return distance_traveled;
 }
 
@@ -187,7 +177,7 @@ bool Player::get_can_fire()
 {
 	if (momentary_cooldown <= 0)
 	{
-		can_fire = true;		
+		can_fire = true;
 	}
 	else
 	{

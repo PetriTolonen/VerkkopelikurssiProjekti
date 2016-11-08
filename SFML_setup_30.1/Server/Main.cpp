@@ -15,7 +15,7 @@
 #include <atomic>
 #include <string>
 
-#include "Box2D.h"
+#include "ServerGame.h"
 
 struct client
 {
@@ -33,12 +33,6 @@ struct outmessage
 	int slen;
 };
 
-struct tableSlot
-{
-	char coord[2];
-	int player;
-};
-
 namespace
 {
 	std::mutex list_usage_mutex;
@@ -46,8 +40,6 @@ namespace
 	std::vector<client> MyClientList;
 	std::atomic<bool> exiting = false;
 	SOCKET serversocket;
-
-	std::vector<tableSlot> table;
 }
 
 void messageSender()
@@ -127,6 +119,11 @@ int main()
 	int newPlayerNumber = 0;
 
 	outmessage temp;
+
+	// Game creation
+	ServerGame game;
+	game.init();
+
 	while (!exiting)
 	{
 		Sleep(100);
@@ -164,22 +161,24 @@ int main()
 		// Print message
 		printf("Received packet from %s:%d\n", inet_ntoa(si_other.sin_addr), ntohs(si_other.sin_port));
 		printf("Data: %s\n", buf);
-		
-			// Save message to temp
-			if (recv_len == 0)
-			{
-				recv_len++;
-				buf[0] = ' ';
-			}
-			temp.message.resize(recv_len);
-			memcpy(&temp.message[0], &buf[0], recv_len);
-			temp.message.pop_back();
-			temp.slen = slen;
 
-			// Save temp to message line
-			list_usage_mutex.lock();
-			MyMessageList.push_front(temp);
-			list_usage_mutex.unlock();
+		// Save message to temp
+		if (recv_len == 0)
+		{
+			recv_len++;
+			buf[0] = ' ';
+		}
+		temp.message.resize(recv_len);
+		memcpy(&temp.message[0], &buf[0], recv_len);
+		temp.message.pop_back();
+		temp.slen = slen;
+
+		// Save temp to message line
+		list_usage_mutex.lock();
+		MyMessageList.push_front(temp);
+		list_usage_mutex.unlock();
+
+		game.ServerGameloop();
 	}
 
 	myMessagerThread->join();

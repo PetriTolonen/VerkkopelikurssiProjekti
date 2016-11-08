@@ -107,36 +107,12 @@ void Game::run()
 	//Tank movement dampening
 	player_body->SetLinearDamping(5);
 	player_body->SetAngularDamping(10);
-	//---player_b2_body---//
 
-	//---enemy1_b2_body---//
-	b2BodyDef BodyDef2;
-	BodyDef2.type = b2_dynamicBody;
-
-	b2PolygonShape Shape2;
-	Shape2.SetAsBox((31.f) / SCALE, (66.f) / SCALE);
-
-	b2FixtureDef FixtureDef2;
-	b2Body* enemy_body1 = myWorld.CreateBody(&BodyDef2);
-	FixtureDef2.density = 10.f;
-	FixtureDef2.friction = 0.7f;
-	FixtureDef2.shape = &Shape2;
-	enemy_body1->SetUserData("enemy1");
-	enemy_body1->CreateFixture(&FixtureDef2);
-	enemy_body1->SetTransform(b2Vec2(2048.0 / SCALE, ((screen_height / 2) + 500) / SCALE), 0);
-	//Tank movement dampening
-	enemy_body1->SetLinearDamping(5);
-	enemy_body1->SetAngularDamping(10);
-	//----------------//
 
 	Tank_hull hull("tank_hull", 1.2, 0.2, 1, 7, 1, 38000, 165);
 	Tank_turret turret("tank_tower", 45, 1.4, 200);
-	Tank_hull hull2("tank_hull", 0.6, 0.2, 1, 9, 1, 38000, 165);
-	Tank_turret turret2("tank_tower", 45, 1.2, 250);
 	player = new Player(player_body, &hull, &turret, 0, 0, 0, 0, 0, 0, 0, 0);
-	enemy1 = new Enemy(enemy_body1, &hull2, &turret2, 0, 0, 0, 0, 0, 0, 0, 0);
 	o_manager.add_object(player);
-	o_manager.add_object(enemy1);
 
 	ai_manager = new AiManager();
 
@@ -296,12 +272,6 @@ void Game::gameloop(sf::RenderWindow *window, sf::View *view, MainMenu *main_men
 				animatedSprite2.play(*currentAnimation2);
 				player->set_animation_has_played();
 			}
-			if (enemy1->get_health() <= 0 && enemy1->get_has_animation_played() == false)
-			{
-				animatedSprite2.setPosition(enemy1->get_position().x - 256, enemy1->get_position().y - 256);
-				animatedSprite2.play(*currentAnimation2);
-				enemy1->set_animation_has_played();
-			}
 
 			if ((player->get_distance_traveled().y - (level_move_count * 4096)) > (4096 - screen_height / 2))
 			{
@@ -371,20 +341,6 @@ void Game::gameloop(sf::RenderWindow *window, sf::View *view, MainMenu *main_men
 						animatedSprite.setPosition(contact.fixtureB->GetBody()->GetPosition().x*SCALE, contact.fixtureB->GetBody()->GetPosition().y*SCALE);
 					}
 
-				}
-				if ((contact.fixtureA->GetBody()->GetUserData() == "ammo" && contact.fixtureB->GetBody()->GetUserData() == "enemy1") ||
-					(contact.fixtureA->GetBody()->GetUserData() == "enemy1" && contact.fixtureB->GetBody()->GetUserData() == "ammo"))
-				{
-					enemy1->reduce_health(1);
-					animatedSprite.play(*currentAnimation);
-					if (contact.fixtureA->GetBody()->GetUserData() == "ammo")
-					{
-						animatedSprite.setPosition(contact.fixtureA->GetBody()->GetPosition().x*SCALE, contact.fixtureA->GetBody()->GetPosition().y*SCALE);
-					}
-					if (contact.fixtureB->GetBody()->GetUserData() == "ammo")
-					{
-						animatedSprite.setPosition(contact.fixtureB->GetBody()->GetPosition().x*SCALE, contact.fixtureB->GetBody()->GetPosition().y*SCALE);
-					}
 				}
 			}
 			//--------------------------------------------------------------------------//
@@ -556,25 +512,7 @@ void Game::gameloop(sf::RenderWindow *window, sf::View *view, MainMenu *main_men
 			//---Draw_display---//
 			window->display();
 
-
-
-			if (enemy1->get_health() <= 0)
-			{
-				if (enemy1->get_health() <= 0 && enemy1->get_has_score_given() == false)
-				{
-					score += 0.1*player->get_distance_traveled().y * 1;
-					enemy1->set_score_given_true();
-				}
-			}
-
-
-			//------------------------Handling_AI----------------------------------//
-			ai_manager->update(player, enemy1);
-
-			//-------------------------End_of_Handling_AI--------------------------//
-
 			//---Score_during_playing---//
-
 			break;
 		}
 		}
