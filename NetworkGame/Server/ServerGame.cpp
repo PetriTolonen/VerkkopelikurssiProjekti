@@ -44,8 +44,6 @@ void ServerGame::init()
 //-----ServerGame_loop-----//
 void ServerGame::ServerGameloop()
 {
-	sf::Time elapsed = clock.restart();
-
 	myWorld.Step(1.0f / 60.0f, 8, 4);
 
 	player->update();
@@ -65,7 +63,7 @@ void ServerGame::ServerGameloop()
 	//--------------------------------------------------------------------------//
 
 	//-----------------------Go through ammo and delete-----------------------------------------------//
-	std::vector<Ammo*>::iterator it = ammo_vector.begin();
+	/*std::vector<Ammo*>::iterator it = ammo_vector.begin();
 	while (it != ammo_vector.end())
 	{
 		if ((*it)->get_timer() <= 0)
@@ -75,7 +73,7 @@ void ServerGame::ServerGameloop()
 		}
 		else
 			it++;
-	}
+	}*/
 
 	//-----------------------------------------------------------------------//
 	delete ContactListener;

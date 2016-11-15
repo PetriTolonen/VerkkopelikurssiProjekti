@@ -8,12 +8,8 @@
 
 #include "Player.h"
 #include "Ammo.h"
-
 #include "Box2D\Box2D.h"
 #include "ContactChecker.h"
-#include <SFML\Config.hpp>
-#include <SFML\Main.hpp>
-#include <SFML\System.hpp>
 
 class ServerGame
 {
@@ -35,7 +31,7 @@ private:
 		exiting
 	};
 	static ServerGame_state _ServerGame_state;
-	std::vector<Ammo*> ammo_vector;
+	//std::vector<Ammo*> ammo_vector;
 
 	MyContactListener *ContactListener;
 
@@ -44,6 +40,5 @@ private:
 
 	Player *player;
 
-	sf::Clock clock;
 	float SCALE;
 };
