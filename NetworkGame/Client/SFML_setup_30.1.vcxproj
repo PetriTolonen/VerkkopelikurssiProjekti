@@ -55,14 +55,14 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>SFML_STATIC;WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\SFML-2.2\include;$(SolutionDir)..\Enet;$(SolutionDir)..\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\Enet\;$(SolutionDir)..\;$(SolutionDir)..\SFML-2.2\include\;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)..\Enet\lib\%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\Enet\lib\;$(SolutionDir)..\SFML-2.2\lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
-      <AdditionalDependencies>enet.lib;ws2_32.lib;winmm.lib;glew.lib;jpeg.lib;opengl32.lib;sfml-window-s-d.lib;sfml-system-s-d.lib;sfml-graphics-s-d.lib;winmm.lib;%(AdditionalDependencies);enet.lib;ws2_32.lib</AdditionalDependencies>
+      <AdditionalDependencies>enet.lib;ws2_32.lib;winmm.lib;freetype.lib;glew.lib;jpeg.lib;opengl32.lib;sfml-window-s-d.lib;sfml-system-s-d.lib;sfml-graphics-s-d.lib;winmm.lib;%(AdditionalDependencies);enet.lib;ws2_32.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -74,7 +74,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>SFML_STATIC;WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\SFML-2.2\include;$(SolutionDir)..\Enet;$(SolutionDir)..\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\Enet\;$(SolutionDir)..\;$(SolutionDir)..\SFML-2.2\include\;</AdditionalIncludeDirectories>
       <BrowseInformation>true</BrowseInformation>
     </ClCompile>
     <Link>
@@ -82,9 +82,9 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(SolutionDir)..\Enet\lib\%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\Enet\lib\;$(SolutionDir)..\SFML-2.2\lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
-      <AdditionalDependencies>enet.lib;ws2_32.lib;winmm.lib;glew.lib;jpeg.lib;opengl32.lib;sfml-window-s.lib;sfml-system-s.lib;sfml-graphics-s.lib;winmm.lib;%(AdditionalDependencies);enet.lib;ws2_32.lib</AdditionalDependencies>
+      <AdditionalDependencies>enet.lib;ws2_32.lib;winmm.lib;freetype.lib;glew.lib;jpeg.lib;opengl32.lib;sfml-window-s.lib;sfml-system-s.lib;sfml-graphics-s.lib;winmm.lib;%(AdditionalDependencies);enet.lib;ws2_32.lib</AdditionalDependencies>
     </Link>
     <Bscmake>
       <PreserveSbr>true</PreserveSbr>

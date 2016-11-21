@@ -1,7 +1,9 @@
+#include <enet\enet.h>
+
 #include "IncludeHelper.h"
 #include "Game.h"
 
-#include <Enet\enet.h>
+
 #include <stdio.h>
 #include <string>
 

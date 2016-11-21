@@ -1,5 +1,5 @@
 #define _CRT_SECURE_NO_WARNINGS
-#include<enet/enet.h>
+#include<enet\enet.h>
 
 #define BUFLEN 512  //Max length of buffer
 #define PORT 8888   //The port on which to listen for incoming data
