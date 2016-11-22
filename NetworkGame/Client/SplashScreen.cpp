@@ -23,20 +23,20 @@ void SplashScreen::show(sf::RenderWindow* win)
 			if (event.type == sf::Event::Resized)
 			{
 				//The Window was Resized - Maintain Aspect Ratio
-				float AspectX = (float)win->getSize().x / 1920;
-				float AspectY = (float)win->getSize().y / 1080;
+				float AspectX = (float)win->getSize().x / 1280;
+				float AspectY = (float)win->getSize().y / 720;
 
 				//Find Which Is the smaller aspect
 				if (AspectX < AspectY)
 				{
 					//Resize Y To Fit
-					sf::Vector2u tempSize = sf::Vector2u(win->getSize().x, (int)(AspectX * 1080));
+					sf::Vector2u tempSize = sf::Vector2u(win->getSize().x, (int)(AspectX * 720));
 					win->setSize(tempSize);
 				}
 				else if (AspectX > AspectY)
 				{
 					//Resize X To Fit
-					sf::Vector2u tempSize = sf::Vector2u((int)(AspectY * 1920), win->getSize().y);
+					sf::Vector2u tempSize = sf::Vector2u((int)(AspectY * 1280), win->getSize().y);
 					win->setSize(tempSize);
 				}
 			}

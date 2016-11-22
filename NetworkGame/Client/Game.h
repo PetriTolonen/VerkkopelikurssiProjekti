@@ -7,16 +7,12 @@
 #include "Object.h"
 #include "Player.h"
 #include "ObjectManager.h"
-#include "Ammo.h"
-#include "Enemy.h"
-#include "AiManager.h"
 #include "SplashScreen.h"
 #include "MainMenu.h"
 #include "GameOver.h"
-
-#include "Box2D\Box2D.h"
-#include "ContactChecker.h"
 #include "AnimatedSprite.h"
+
+#include <iostream>
 
 class Game
 {
@@ -25,17 +21,14 @@ public:
 	void run();
 	void gameloop(sf::RenderWindow *window, sf::View *view, MainMenu *main_menu);
 	void level_creation();
-	void set_view(sf::View *view, Player *player);
 
 private:
-	static const int screen_widht = 1920;
-	static const int screen_height = 1080;
+	static const int screen_widht = 1280;
+	static const int screen_height = 720;
 	int level[1024];
 	int level_trees[256];
 	TileMap map;
 	TileMap map2;
-	TileMap map3;
-	TileMap map4;
 
 	static ObjectManager o_manager;
 
@@ -56,9 +49,6 @@ private:
 		exiting
 	};
 	static game_state _game_state;
-	std::vector<Ammo*> ammo_vector;
-
-	MyContactListener *ContactListener;
 
 	int time_passed_after_death;
 	int score;
@@ -67,14 +57,9 @@ private:
 	int modulo_int;
 
 	//----Init
-	b2World myWorld;
 
 	sf::Texture boxTexture;
 	sf::Texture deathImage;
-	sf::Texture cooldown_texture;
-	sf::Sprite cooldown_sprite;
-	sf::Texture cooldown_texture_back;
-	sf::Sprite cooldown_sprite_back;
 	sf::Texture player_healtbar_texture;
 	sf::Sprite player_healtbar_sprite;
 	sf::Texture player_healtbar_texture_backround;
@@ -88,8 +73,6 @@ private:
 	Animation* currentAnimation2;
 	AnimatedSprite animatedSprite3;
 	Animation* currentAnimation3;
-
-	AiManager *ai_manager;
 
 	Player *player;
 	sf::Clock clock;

@@ -65,8 +65,8 @@ MainMenu::menu_result MainMenu::get_menu_response(sf::RenderWindow* win, sf::Spr
 			if (menu_event.type == sf::Event::Resized)
 			{
 				//The Window was Resized - Maintain Aspect Ratio
-				float AspectX = (float)win->getSize().x / 1920;
-				float AspectY = (float)win->getSize().y / 1080;
+				float AspectX = (float)win->getSize().x / 1280;
+				float AspectY = (float)win->getSize().y / 720;
 
 				//Find Which Is the smaller aspect
 				if (AspectX < AspectY)
