@@ -3,21 +3,93 @@
 #include "IncludeHelper.h"
 #include "Game.h"
 
+// For threads
+#include <list>
+#include <mutex>
+#include <thread>
+#include <fstream>
+#include <vector>
 
+//
 #include <stdio.h>
 #include <string>
 
 #define PORT 8888   //The port
 
-int main()
+namespace
 {
+	float posX;
 	ENetAddress address;
 	ENetHost *client;
 	ENetPeer *peer;
 	char message[1024];
 	ENetEvent event;
 	int eventStatus;
+}
 
+void netWorkThread(Game *game)
+{
+	posX = 0.0f;
+	/* Wait up to 1000 milliseconds for an event. */
+	while (enet_host_service(client, &event, 1000) > 0 || true)
+	{
+		switch (event.type)
+		{
+		case ENET_EVENT_TYPE_CONNECT:
+			printf("A new client connected from %x:%u.\n",
+				event.peer->address.host,
+				event.peer->address.port);
+			/* Store any relevant client information here. */
+			event.peer->data = "Client information";
+			break;
+		case ENET_EVENT_TYPE_RECEIVE:
+			printf("A packet of length %u containing %08x was received from %s on channel %u.\n",
+				event.packet->dataLength,
+				*event.packet->data,
+				event.peer->data,
+				event.channelID);
+
+			posX = *(int*)event.packet->data;
+			
+			/* Clean up the packet now that we're done using it. */
+			enet_packet_destroy(event.packet);
+
+			break;
+
+		case ENET_EVENT_TYPE_DISCONNECT:
+			printf("%s disconnected.\n", event.peer->data);
+			/* Reset the peer's client information. */
+			event.peer->data = NULL;
+		}
+
+		// Network move
+		if (game->getRunning())
+		{
+			game->networkUpdate(posX);
+		}		
+
+		int intMessage[1] = {1};
+		printf("Say > ");		
+		gets(message);
+
+		intMessage[0] = std::stoi(message);
+
+		char* buffer = (char*)intMessage;
+
+		if (strlen(message) > 0) {
+			ENetPacket *packet = enet_packet_create(buffer, 4, ENET_PACKET_FLAG_RELIABLE);
+			enet_peer_send(peer, 0, packet);
+		}
+
+		
+	}
+}
+
+int main()
+{
+	Game m_game;
+
+	//---- Join server
 	// a. Initialize enet
 	if (enet_initialize() != 0) {
 		fprintf(stderr, "An error occured while initializing ENet.\n");
@@ -47,43 +119,8 @@ int main()
 
 	eventStatus = 1;
 
-	/* Wait up to 1000 milliseconds for an event. */
-	while (enet_host_service(client, &event, 1000) > 0)
-	{
-		switch (event.type)
-		{
-		case ENET_EVENT_TYPE_CONNECT:
-			printf("A new client connected from %x:%u.\n",
-				event.peer->address.host,
-				event.peer->address.port);
-			/* Store any relevant client information here. */
-			event.peer->data = "Client information";
-			break;
-		case ENET_EVENT_TYPE_RECEIVE:
-			printf("A packet of length %u containing %s was received from %s on channel %u.\n",
-				event.packet->dataLength,
-				event.packet->data,
-				event.peer->data,
-				event.channelID);
-			/* Clean up the packet now that we're done using it. */
-			enet_packet_destroy(event.packet);
-
-			break;
-
-		case ENET_EVENT_TYPE_DISCONNECT:
-			printf("%s disconnected.\n", event.peer->data);
-			/* Reset the peer's client information. */
-			event.peer->data = NULL;
-		}
-
-		printf("Say > ");
-		gets(message);
-
-		if (strlen(message) > 0) {
-			ENetPacket *packet = enet_packet_create(message, strlen(message) + 1, ENET_PACKET_FLAG_RELIABLE);
-			enet_peer_send(peer, 0, packet);
-		}
-	}
-	Game a;
-	a.run();
+	std::thread* networkThread = new std::thread(netWorkThread, &m_game);
+	
+	// Start Game
+	m_game.run();
 }

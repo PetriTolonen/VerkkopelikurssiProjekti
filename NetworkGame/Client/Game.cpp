@@ -59,8 +59,7 @@ void Game::run()
 	//----Scale
 	SCALE = 30.f;
 
-	player = new Player();
-	player->set_position(0, 500);
+	player = new Player("box.png", 50, 500, 0.1f, SCALE);
 	o_manager.add_object(player);
 
 	//----Hit_Explosion_Animation----//
@@ -135,21 +134,25 @@ void Game::gameloop(sf::RenderWindow *window, sf::View *view, MainMenu *main_men
 		{
 		case Game::showing_menu:
 		{
+			running = false;
 			show_menu(window);
 			break;
 		}
 		case Game::showing_splash:
 		{
+			running = false;
 			show_splash_screen(window);
 			break;
 		}
 		case Game::showing_game_over:
 		{
+			running = false;
 			show_game_over(window);
 			break;
 		}
 		case Game::playing:
 		{
+			running = true;
 			window->clear(sf::Color(100, 200, 0));
 
 			sf::Time elapsed = clock.restart();
@@ -159,6 +162,8 @@ void Game::gameloop(sf::RenderWindow *window, sf::View *view, MainMenu *main_men
 			window->draw(map2);
 			o_manager.update(event, window, elapsed.asMilliseconds());
 			o_manager.draw(window);
+
+			player->get_position();
 
 			////----Animations----//
 			//animatedSprite.update(elapsed);
@@ -350,6 +355,11 @@ void Game::level_creation()
 	};
 
 	map2.load("tileset_trees.png", sf::Vector2u(256, 256), level_trees, 16, 16);
+}
+
+void Game::networkUpdate(float x)
+{
+	player->set_position(x, 500);
 }
 
 void Game::show_splash_screen(sf::RenderWindow *window)

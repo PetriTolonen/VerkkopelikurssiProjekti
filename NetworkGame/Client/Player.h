@@ -7,7 +7,7 @@
 class Player : public Object
 {
 public:
-	Player();
+	Player(std::string playerTextureName, float posX, float posY, float speed, float worldScale);
 	~Player(void);
 
 	void on_update(sf::Event event, sf::RenderWindow* win, float elapsed);
@@ -26,7 +26,8 @@ public:
 private:
 	float posX;
 	float posY;
-
+	float worldScale;
+	float speed;
 	bool animation_has_played;
 };
 

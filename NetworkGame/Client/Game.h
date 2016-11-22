@@ -21,6 +21,8 @@ public:
 	void run();
 	void gameloop(sf::RenderWindow *window, sf::View *view, MainMenu *main_menu);
 	void level_creation();
+	void networkUpdate(float x);
+	bool getRunning() { return running; };
 
 private:
 	static const int screen_widht = 1280;
@@ -77,5 +79,7 @@ private:
 	Player *player;
 	sf::Clock clock;
 	float SCALE;
+
+	bool running = false;
 };
 #endif

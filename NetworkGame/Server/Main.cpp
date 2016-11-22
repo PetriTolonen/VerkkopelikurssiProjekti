@@ -6,6 +6,8 @@
 
 // For threads
 #include <list>
+#include <mutex>
+#include <thread>
 #include <fstream>
 #include <vector>
 #include <string>
@@ -16,6 +18,7 @@ int main()
 {
 	ENetAddress address;
 	ENetHost * server;
+	char message[1024];
 
 	if (enet_initialize() != 0)
 	{
@@ -56,13 +59,17 @@ int main()
 			event.peer->data = "Client information";
 			break;
 		case ENET_EVENT_TYPE_RECEIVE:
-			printf("A packet of length %u containing %s was received from %s on channel %u.\n",
+			printf("A packet of length %u containing %08x was received from %s on channel %u.\n",
 				event.packet->dataLength,
-				event.packet->data,
+				*event.packet->data,
 				event.peer->data,
 				event.channelID);
+
+			//---- Send packet to client
+			enet_peer_send(event.peer, 0, event.packet);
+
 			/* Clean up the packet now that we're done using it. */
-			enet_packet_destroy(event.packet);
+			//enet_packet_destroy(event.packet);
 
 			break;
 

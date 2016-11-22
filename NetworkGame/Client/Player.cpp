@@ -1,8 +1,12 @@
 #include "Player.h"
 
-Player::Player() : Object()
+Player::Player(std::string playerTextureName, float posX, float posY, float speed, float worldScale) : Object()
 {
-	
+	this->posX = posX;
+	this->posY = posY;
+	this->speed = speed;
+	this->worldScale = worldScale;
+	set_texture(playerTextureName);
 }
 
 Player::~Player(void)
@@ -12,18 +16,40 @@ Player::~Player(void)
 
 void Player::update(sf::Event event, sf::RenderWindow* win)
 {
-
+	
 }
 
 void Player::on_update(sf::Event event, sf::RenderWindow* win, float elapsed)
 {
-	
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+	{
+		posY -= speed * elapsed;
+	}
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+	{
+		posY += speed * elapsed;
+	}
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+	{
+		posX -= speed * elapsed;
+	}
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+	{
+		posX += speed * elapsed;
+	}
+
+	set_position(posX, posY);
 }
 
 void Player::set_position(float x, float y)
 {
-	this->posX = x*30.0;
-	this->posY = y*30.0;
+	this->posX = x;//*worldScale;
+	this->posY = y;//*worldScale;
+
+	get_sprite().setPosition(posX, posY);
 }
 
 float Player::rotate(float rotation_speed)
@@ -39,7 +65,7 @@ sf::Vector2f Player::get_position()
 
 void Player::on_draw(sf::RenderWindow* win)
 {
-
+	win->draw(sprite_name);
 }
 
 void Player::set_rotation(float rot)
