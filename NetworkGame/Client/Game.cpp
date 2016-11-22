@@ -304,7 +304,7 @@ void Game::gameloop(sf::RenderWindow *window, sf::View *view, MainMenu *main_men
 			window->setView(*view);
 			window->draw(map);
 			window->draw(map3);
-			o_manager.update(event, window);
+			o_manager.update(event, window, elapsed.asMilliseconds());
 			o_manager.draw(window);
 
 			//---DrawAmmo---//

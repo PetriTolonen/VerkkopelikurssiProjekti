@@ -13,7 +13,7 @@ public:
 
 	void add_object(Object* const object);
 	bool contains_object(const Object* const entity) const;
-	void update(sf::Event event, sf::RenderWindow* win);
+	void update(sf::Event event, sf::RenderWindow* win, float elapsed);
 	void draw(sf::RenderWindow* win);
 private:
 	std::list<Object* const> objects;

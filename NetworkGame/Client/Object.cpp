@@ -54,13 +54,13 @@ void Object::destroy()
 	destroyed = true;
 }
 
-void Object::update(sf::Event event, sf::RenderWindow* win)
+void Object::update(sf::Event event, sf::RenderWindow* win, float elapsed)
 {
 	if (!enabled || destroyed)
 	{
 		return;
 	}
-	on_update(event, win);
+	on_update(event, win, elapsed);
 }
 
 void Object::draw(sf::RenderWindow* win)
@@ -77,6 +77,6 @@ sf::Sprite&Object::get_sprite()
 	return sprite_name;
 }
 
-void Object::on_update(sf::Event event, sf::RenderWindow* win)
+void Object::on_update(sf::Event event, sf::RenderWindow* win, float elapsed)
 {
 }

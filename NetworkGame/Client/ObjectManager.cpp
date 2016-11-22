@@ -41,18 +41,18 @@ bool ObjectManager::contains_object(const Object* const entity) const
 	return std::find(objects.begin(), objects.end(), entity) != objects.end();
 }
 
-void ObjectManager::update(sf::Event event, sf::RenderWindow* win)
+void ObjectManager::update(sf::Event event, sf::RenderWindow* win, float elapsed)
 {
 	free_objects();
 
-	std::for_each(objects.begin(), objects.end(), [this, &win, &event](Object* e)
+	std::for_each(objects.begin(), objects.end(), [this, &win, &event, &elapsed](Object* e)
 	{
 		if (e->is_destroyed())
 		{
 			destroyed_objects.push_back(e);
 			return;
 		}
-		e->update(event, win);
+		e->update(event, win, elapsed);
 	}); 
 
 }

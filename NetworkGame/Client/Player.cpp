@@ -32,7 +32,7 @@ void Player::update(sf::Event event, sf::RenderWindow* win)
 
 }
 
-void Player::on_update(sf::Event event, sf::RenderWindow* win)
+void Player::on_update(sf::Event event, sf::RenderWindow* win, float elapsed)
 {
 	if (health > 0)
 	{
@@ -61,12 +61,12 @@ void Player::on_update(sf::Event event, sf::RenderWindow* win)
 		{
 			if (rotation2 > 180)
 			{
-				tt->get_sprite().rotate(tt->get_traverse_speed() * 10 * _elapsed);
+				tt->get_sprite().rotate(tt->get_traverse_speed() * 10 * elapsed);
 
 			}
 			if (rotation2 < 180)
 			{
-				tt->get_sprite().rotate(-tt->get_traverse_speed() * 10 * _elapsed);
+				tt->get_sprite().rotate(-tt->get_traverse_speed() * 10 * elapsed);
 			}
 		}
 
@@ -74,7 +74,7 @@ void Player::on_update(sf::Event event, sf::RenderWindow* win)
 		{
 			momentary_acceleration_forward = t->get_acceleration_forward();
 			momentary_max_speed_forward = t->get_max_speed_forward();
-			momentary_speed_forward += _elapsed *momentary_acceleration_forward; //_elapsed
+			momentary_speed_forward += elapsed *momentary_acceleration_forward; //elapsed
 
 
 
@@ -89,7 +89,7 @@ void Player::on_update(sf::Event event, sf::RenderWindow* win)
 		{
 			momentary_acceleration_backward = tank_hull.get_acceleration_backward();
 			momentary_max_speed_backward = tank_hull.get_max_speed_backward();
-			momentary_speed_backward += _elapsed * momentary_acceleration_backward;
+			momentary_speed_backward += elapsed * momentary_acceleration_backward;
 
 			if (momentary_speed_backward > momentary_max_speed_backward)
 			{
