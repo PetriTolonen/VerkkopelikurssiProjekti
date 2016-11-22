@@ -21,8 +21,9 @@ public:
 	void run();
 	void gameloop(sf::RenderWindow *window, sf::View *view, MainMenu *main_menu);
 	void level_creation();
-	void networkUpdate(float x);
+	void networkUpdate(int x, int y);
 	bool getRunning() { return running; };
+	Player* getPlayer() { return player; };
 
 private:
 	static const int screen_widht = 1280;
@@ -81,5 +82,7 @@ private:
 	float SCALE;
 
 	bool running = false;
+
+	sf::Font font;
 };
 #endif

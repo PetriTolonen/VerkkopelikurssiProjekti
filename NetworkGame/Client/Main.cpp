@@ -18,7 +18,8 @@
 
 namespace
 {
-	float posX;
+	int posX;
+	int posY;
 	ENetAddress address;
 	ENetHost *client;
 	ENetPeer *peer;
@@ -31,7 +32,7 @@ void netWorkThread(Game *game)
 {
 	posX = 0.0f;
 	/* Wait up to 1000 milliseconds for an event. */
-	while (enet_host_service(client, &event, 1000) > 0 || true)
+	while (enet_host_service(client, &event, 10) > 0 || true)
 	{
 		switch (event.type)
 		{
@@ -49,8 +50,15 @@ void netWorkThread(Game *game)
 				event.peer->data,
 				event.channelID);
 
-			posX = *(int*)event.packet->data;
-			
+			if (game && game->getRunning())
+			{
+				int intMessageIn[2] = { 1 , 1 };
+				std::memcpy(intMessageIn, &*event.packet->data, 8);
+				posX = intMessageIn[0];
+				posY = intMessageIn[1];
+			}
+
+
 			/* Clean up the packet now that we're done using it. */
 			enet_packet_destroy(event.packet);
 
@@ -60,28 +68,23 @@ void netWorkThread(Game *game)
 			printf("%s disconnected.\n", event.peer->data);
 			/* Reset the peer's client information. */
 			event.peer->data = NULL;
+			break;
 		}
 
 		// Network move
-		if (game->getRunning())
+		if (game && game->getRunning())
 		{
-			game->networkUpdate(posX);
-		}		
+			game->networkUpdate(posX, posY);
 
-		int intMessage[1] = {1};
-		printf("Say > ");		
-		gets(message);
+			int intMessage[1] = { 1 };
+			//char* buffer = (char*)intMessage;
 
-		intMessage[0] = std::stoi(message);
-
-		char* buffer = (char*)intMessage;
-
-		if (strlen(message) > 0) {
-			ENetPacket *packet = enet_packet_create(buffer, 4, ENET_PACKET_FLAG_RELIABLE);
-			enet_peer_send(peer, 0, packet);
+			if (game->getPlayer()->getMoves()) {
+				intMessage[0] = game->getPlayer()->getNetworkMove();
+				ENetPacket *packet = enet_packet_create(intMessage, 4, ENET_PACKET_FLAG_RELIABLE);
+				enet_peer_send(peer, 0, packet);
+			}
 		}
-
-		
 	}
 }
 
@@ -120,7 +123,7 @@ int main()
 	eventStatus = 1;
 
 	std::thread* networkThread = new std::thread(netWorkThread, &m_game);
-	
+
 	// Start Game
 	m_game.run();
 }

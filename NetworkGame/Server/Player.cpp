@@ -7,12 +7,12 @@ Player::Player(b2Body* player_body)
 
 void Player::update()
 {
-
+	
 }
 
-void Player::rotateAim(float rotation)
+b2Vec2 Player::getPos()
 {
-	turretDir = rotation;
+	return playerBody->GetPosition();;
 }
 
 void Player::handleBodyAngularVelocity(float velAngular)
@@ -20,7 +20,7 @@ void Player::handleBodyAngularVelocity(float velAngular)
 	playerBody->SetAngularVelocity(velAngular);
 }
 
-void Player::handleBodyLinearVelocity(float velX, float velY)
+void Player::handleBodyLinearVelocity(b2Vec2 velocity)
 {
-	playerBody->SetLinearVelocity(b2Vec2(velX, velY));
+	playerBody->SetLinearVelocity(velocity);
 }

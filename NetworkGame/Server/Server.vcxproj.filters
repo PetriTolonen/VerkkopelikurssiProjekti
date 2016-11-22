@@ -162,9 +162,6 @@
     <ClCompile Include="ServerGame.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Ammo.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ContactChecker.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -315,9 +312,6 @@
       <Filter>Box2D</Filter>
     </ClInclude>
     <ClInclude Include="ServerGame.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Ammo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ContactChecker.h">

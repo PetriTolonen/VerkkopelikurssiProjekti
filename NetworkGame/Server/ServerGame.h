@@ -7,7 +7,6 @@
 
 
 #include "Player.h"
-#include "Ammo.h"
 #include "Box2D\Box2D.h"
 #include "ContactChecker.h"
 
@@ -17,11 +16,13 @@ public:
 	ServerGame();
 	void init();
 	void ServerGameloop();
-	void level_creation();
+	void networkUpdate(b2Vec2 velocity);
+	bool getRunning() { return running; };
+	Player* getPlayer() { return player; };
 
 private:
-	static const int screen_widht = 1920;
-	static const int screen_height = 1080;
+	static const int screen_widht = 1280;
+	static const int screen_height = 720;
 	int level[1024];
 	int level_trees[256];
 	
@@ -41,4 +42,5 @@ private:
 	Player *player;
 
 	float SCALE;
+	bool running = false;
 };

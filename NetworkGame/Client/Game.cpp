@@ -119,6 +119,9 @@ void Game::run()
 	animatedSprite3.setLooped(false);
 	animatedSprite3.setOrigin(128, 128);
 
+	// Declare and load a font
+	font.loadFromFile("impact.ttf");
+
 	gameloop(window, view, main_menu);
 }
 
@@ -175,9 +178,6 @@ void Game::gameloop(sf::RenderWindow *window, sf::View *view, MainMenu *main_men
 			//---Information_hud---//
 			if (player->get_health() > 0)
 			{
-				// Declare and load a font
-				sf::Font font;
-				font.loadFromFile("impact.ttf");
 				// Create a text
 				std::ostringstream re_text;
 				re_text << "Score " << score;
@@ -189,7 +189,6 @@ void Game::gameloop(sf::RenderWindow *window, sf::View *view, MainMenu *main_men
 				text.setColor(sf::Color::Yellow);
 				text.setString(re_text.str());
 
-				font.loadFromFile("impact.ttf");
 				// Create a text
 				std::ostringstream he_text;
 				he_text << "Health: ";
@@ -286,8 +285,6 @@ void Game::gameloop(sf::RenderWindow *window, sf::View *view, MainMenu *main_men
 				show_game_over(window);
 			}
 		}
-
-
 	}
 	window->close();
 }
@@ -357,9 +354,9 @@ void Game::level_creation()
 	map2.load("tileset_trees.png", sf::Vector2u(256, 256), level_trees, 16, 16);
 }
 
-void Game::networkUpdate(float x)
+void Game::networkUpdate(int x, int y)
 {
-	player->set_position(x, 500);
+	player->set_position(x, y);
 }
 
 void Game::show_splash_screen(sf::RenderWindow *window)

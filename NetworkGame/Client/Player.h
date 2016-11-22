@@ -23,12 +23,19 @@ public:
 	int get_health();
 	bool get_has_animation_played();
 
+	int getNetworkMove();
+	void zeroNetworkMove();
+	bool getMoves() { return moves; }
+
 private:
 	float posX;
 	float posY;
 	float worldScale;
 	float speed;
 	bool animation_has_played;
+
+	sf::Vector2i networkMove;
+	bool moves = false;
 };
 
 #endif;

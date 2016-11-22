@@ -1,7 +1,6 @@
 #include "Box2D\Box2D.h"
 #include <vector>
 #include <algorithm>
-#include "Ammo.h"
 
 struct ContactCheck {
 	b2Fixture *fixtureA;

@@ -9,12 +9,14 @@ public:
 
 	void update();
 
-	void rotateAim(float rotation);
+	b2Vec2 getPos();
+
 	void handleBodyAngularVelocity(float velAngular);
-	void handleBodyLinearVelocity(float velX, float velY);
+	void handleBodyLinearVelocity(b2Vec2 velocity);
 
 private:
 	b2Body* playerBody;
 	float M_PI = 3.14159265358979323846;
 	float turretDir;
+	b2Vec2 pos;
 };

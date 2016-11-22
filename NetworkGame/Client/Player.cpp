@@ -23,25 +23,27 @@ void Player::on_update(sf::Event event, sf::RenderWindow* win, float elapsed)
 {
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
 	{
-		posY -= speed * elapsed;
+		networkMove.y = -1;
+		moves = true;
 	}
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
 	{
-		posY += speed * elapsed;
+		networkMove.y = 1;
+		moves = true;
 	}
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
 	{
-		posX -= speed * elapsed;
+		networkMove.x = -1;
+		moves = true;
 	}
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
 	{
-		posX += speed * elapsed;
+		networkMove.x = 1;
+		moves = true;
 	}
-
-	set_position(posX, posY);
 }
 
 void Player::set_position(float x, float y)
@@ -86,4 +88,33 @@ int Player::get_health()
 bool Player::get_has_animation_played()
 {
 	return animation_has_played;
+}
+
+int Player::getNetworkMove()
+{
+	int dir;
+	if (networkMove.x >= 1)
+	{
+		dir = 0;
+	}
+	else if (networkMove.x <= -1)
+	{
+		dir = 1;
+	}
+	if (networkMove.y >= 1)
+	{
+		dir = 2;
+	}
+	else if (networkMove.y <= -1)
+	{
+		dir = 3;
+	}
+	zeroNetworkMove();
+	return dir;
+}
+
+void Player::zeroNetworkMove()
+{
+	networkMove = sf::Vector2i(0, 0); 
+	moves = false;
 }
