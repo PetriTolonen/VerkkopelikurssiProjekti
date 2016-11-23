@@ -16,6 +16,25 @@
 
 #define PORT 8888   //The port
 
+enum PacketTypes
+{
+	type_mData = 1,
+	type_pData = 2
+};
+
+struct mData
+{
+	int id = type_mData;
+	int dir;
+};
+
+struct pData
+{
+	int id = type_pData;
+	int x = 0;
+	int y = 0;
+};
+
 namespace
 {
 	int posX;
@@ -26,13 +45,16 @@ namespace
 	char message[1024];
 	ENetEvent event;
 	int eventStatus;
+	int receivePacketId;
+	pData* in;
 }
 
 void netWorkThread(Game *game)
 {
+	pData* in = new pData();
 	posX = 0.0f;
 	/* Wait up to 1000 milliseconds for an event. */
-	while (enet_host_service(client, &event, 10) > 0 || true)
+	while (enet_host_service(client, &event, 1) > 0 || true)
 	{
 		switch (event.type)
 		{
@@ -52,12 +74,27 @@ void netWorkThread(Game *game)
 
 			if (game && game->getRunning())
 			{
-				int intMessageIn[2] = { 1 , 1 };
-				std::memcpy(intMessageIn, &*event.packet->data, 8);
-				posX = intMessageIn[0];
-				posY = intMessageIn[1];
-			}
+				receivePacketId = (int)*event.packet->data;
+				switch (receivePacketId)
+				{
+				case type_pData:
+				{
+					std::memcpy(in, &*event.packet->data, sizeof(pData));
 
+					game->networkUpdate(in->x, in->y);
+					break;
+				}				
+				case type_mData:
+				{
+					// For some reason you got a move packet
+					std::cout << "Wrong packet received" << std::endl;
+					break;
+				}
+				default:
+					break;
+				}
+				
+			}
 
 			/* Clean up the packet now that we're done using it. */
 			enet_packet_destroy(event.packet);
@@ -74,14 +111,10 @@ void netWorkThread(Game *game)
 		// Network move
 		if (game && game->getRunning())
 		{
-			game->networkUpdate(posX, posY);
-
-			int intMessage[1] = { 1 };
-			//char* buffer = (char*)intMessage;
-
+			mData send;
 			if (game->getPlayer()->getMoves()) {
-				intMessage[0] = game->getPlayer()->getNetworkMove();
-				ENetPacket *packet = enet_packet_create(intMessage, 4, ENET_PACKET_FLAG_RELIABLE);
+				send.dir = game->getPlayer()->getNetworkMove();
+				ENetPacket *packet = enet_packet_create(&send, sizeof(mData), ENET_PACKET_FLAG_RELIABLE);
 				enet_peer_send(peer, 0, packet);
 			}
 		}

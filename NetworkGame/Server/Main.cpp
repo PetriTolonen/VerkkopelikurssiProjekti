@@ -11,8 +11,27 @@
 #include <fstream>
 #include <vector>
 #include <string>
-
+//
 #include "ServerGame.h"
+
+enum PacketTypes
+{
+	type_mData = 1,
+	type_pData = 2
+};
+
+struct mData
+{
+	int id = type_mData;
+	int dir = 0;
+};
+
+struct pData
+{
+	int id = type_pData;
+	int x = 0;
+	int y = 0;
+};
 
 namespace
 {
@@ -22,13 +41,16 @@ namespace
 	int playerCount = 0;
 	std::vector<ENetPeer*> players;
 	ENetPeer *newPeer;
+	int receivePacketId;
+	mData* in;
 }
 
 void serverNetworkThread(ServerGame* game)
 {
+	in = new mData();
 	ENetEvent event;
 	/* Wait up to 1000 milliseconds for an event. */
-	while (enet_host_service(server, &event, 10) > 0 || true)
+	while (enet_host_service(server, &event, 1) > 0 || true)
 	{
 		switch (event.type)
 		{
@@ -51,30 +73,47 @@ void serverNetworkThread(ServerGame* game)
 				event.peer->data,
 				event.channelID);
 
-			// Handle movement
-			if (game->getRunning())
+			receivePacketId = (int)*event.packet->data;
+			switch (receivePacketId)
 			{
-				int dir = *event.packet->data;
-				int intX = 0;
-				int intY = 0;
-				if (dir == 0)
-				{
-					intX = 1;
-				}
-				else if (dir == 1)
-				{
-					intX = -1;
-				}
-				else if (dir == 2)
-				{
-					intY = 1;
-				}
-				else if (dir == 3)
-				{
-					intY = -1;
-				}
+			case type_pData:
+			{
+				// For some reason you got a move packet
+				printf("Wrong packet received \n");
+				break;
+			}
+			case type_mData:
+			{
+				std::memcpy(in, &*event.packet->data, sizeof(mData));
 
-				game->networkUpdate(b2Vec2(float(intX*30), float(intY * 30)));
+				// Handle movement
+				if (game->getRunning())
+				{
+					int intX = 0;
+					int intY = 0;
+					if (in->dir == 0)
+					{
+						intX = 1;
+					}
+					else if (in->dir == 1)
+					{
+						intX = -1;
+					}
+					else if (in->dir == 2)
+					{
+						intY = 1;
+					}
+					else if (in->dir == 3)
+					{
+						intY = -1;
+					}
+
+					game->networkUpdate(b2Vec2(float(intX * 30), float(intY * 30)));
+					break;
+				}
+			default:
+				break;
+			}
 			}
 
 			/* Clean up the packet now that we're done using it. */
@@ -93,14 +132,12 @@ void serverNetworkThread(ServerGame* game)
 		{
 			for (int i = 0; i < players.size(); i++)
 			{
-				int intMessage[2] = { 1 , 1 };
-				int playerX = game->getPlayer()->getPos().x;
-				int playerY = game->getPlayer()->getPos().y;
-				intMessage[0] = playerX;
-				intMessage[1] = playerY;
-				ENetPacket *packet = enet_packet_create(intMessage, 8, ENET_PACKET_FLAG_RELIABLE);
+				pData send;
+				send.x = game->getPlayer()->getPos().x;
+				send.y = game->getPlayer()->getPos().y;
+				ENetPacket *packet = enet_packet_create(&send, sizeof(pData), ENET_PACKET_FLAG_RELIABLE);
 				enet_peer_send(players[i], 0, packet);
-			}			
+			}
 		}
 	}
 
