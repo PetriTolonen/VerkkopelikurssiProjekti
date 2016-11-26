@@ -28,13 +28,27 @@ void ServerGame::init()
 	FixtureDef.shape = &Shape;
 	player_body->SetUserData("player");
 	player_body->CreateFixture(&FixtureDef);
-	player_body->SetTransform(b2Vec2(18.0 / SCALE, (screen_height / 2) / SCALE), 0);
+	player_body->SetTransform(b2Vec2(400, 500), 0);
 	// movement dampening
 	player_body->SetLinearDamping(10);
 	player_body->SetAngularDamping(0);
-	//---player_b2_body---//
+	//-----------------------------------------
+
+	//---player_b2_body---//	
+	b2Body* player_body1 = myWorld.CreateBody(&BodyDef);
+
+	player_body1->SetUserData("player1");
+	player_body1->CreateFixture(&FixtureDef);
+	player_body1->SetTransform(b2Vec2(200, 300), 0);
+	// movement dampening
+	player_body1->SetLinearDamping(10);
+	player_body1->SetAngularDamping(0);
+	//-----------------------------------------
 
 	player = new Player(player_body);
+	player1 = new Player(player_body1);
+	players.push_back(player);
+	players.push_back(player1);
 	ServerGameloop();
 }
 
@@ -47,7 +61,10 @@ void ServerGame::ServerGameloop()
 
 		myWorld.Step(1.0f / 60.0f, 8, 4);
 
-		player->update();
+		for (size_t i = 0; i < players.size(); i++)
+		{
+			players[i]->update();
+		}
 
 		//-------------------check contacts------------------------------------//
 		std::vector<ContactCheck>::iterator pos;
@@ -82,7 +99,14 @@ void ServerGame::ServerGameloop()
 	delete ContactListener;
 }
 
-void ServerGame::networkUpdate(b2Vec2 velocity)
+void ServerGame::networkUpdate(b2Vec2 velocity, int playerId)
 {
-	player->handleBodyLinearVelocity(velocity);
+	if (playerId == 1)
+	{
+		player->handleBodyLinearVelocity(velocity);
+	}
+	else
+	{
+		player1->handleBodyLinearVelocity(velocity);
+	}
 }

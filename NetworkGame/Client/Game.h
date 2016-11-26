@@ -21,9 +21,9 @@ public:
 	void run();
 	void gameloop(sf::RenderWindow *window, sf::View *view, MainMenu *main_menu);
 	void level_creation();
-	void networkUpdate(int x, int y);
+	void networkUpdate(int id, int x, int y);
 	bool getRunning() { return running; };
-	Player* getPlayer() { return player; };
+	Player* getPlayer(int id) { return players[id]; };
 
 private:
 	static const int screen_widht = 1280;
@@ -78,6 +78,8 @@ private:
 	Animation* currentAnimation3;
 
 	Player *player;
+	Player *player1;
+	std::vector<Player*> players;
 	sf::Clock clock;
 	float SCALE;
 

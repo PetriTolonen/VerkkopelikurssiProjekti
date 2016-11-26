@@ -19,7 +19,8 @@
 enum PacketTypes
 {
 	type_mData = 1,
-	type_pData = 2
+	type_pData = 2,
+	type_aData = 3
 };
 
 struct mData
@@ -31,8 +32,15 @@ struct mData
 struct pData
 {
 	int id = type_pData;
+	int playerId = 0;
 	int x = 0;
 	int y = 0;
+};
+
+struct aData
+{
+	int id = type_aData;
+	int connectionAlive = 0;
 };
 
 namespace
@@ -47,12 +55,16 @@ namespace
 	int eventStatus;
 	int receivePacketId;
 	pData* in;
+	sf::Clock aliveSendTime;
 }
 
 void netWorkThread(Game *game)
 {
 	pData* in = new pData();
 	posX = 0.0f;
+
+	aliveSendTime.restart();
+
 	/* Wait up to 1000 milliseconds for an event. */
 	while (enet_host_service(client, &event, 1) > 0 || true)
 	{
@@ -81,7 +93,7 @@ void netWorkThread(Game *game)
 				{
 					std::memcpy(in, &*event.packet->data, sizeof(pData));
 
-					game->networkUpdate(in->x, in->y);
+					game->networkUpdate(in->playerId, in->x, in->y);
 					break;
 				}				
 				case type_mData:
@@ -112,11 +124,20 @@ void netWorkThread(Game *game)
 		if (game && game->getRunning())
 		{
 			mData send;
-			if (game->getPlayer()->getMoves()) {
-				send.dir = game->getPlayer()->getNetworkMove();
+			if (game->getPlayer(0)->getMoves()) {
+				send.dir = game->getPlayer(0)->getNetworkMove();
 				ENetPacket *packet = enet_packet_create(&send, sizeof(mData), ENET_PACKET_FLAG_RELIABLE);
 				enet_peer_send(peer, 0, packet);
 			}
+		}
+
+		// Im alive
+		if (aliveSendTime.getElapsedTime().asSeconds() > 1)
+		{
+			aData send;
+			send.connectionAlive = 1;
+			ENetPacket *packet = enet_packet_create(&send, sizeof(aData), ENET_PACKET_FLAG_RELIABLE);
+			enet_peer_send(peer, 0, packet);
 		}
 	}
 }

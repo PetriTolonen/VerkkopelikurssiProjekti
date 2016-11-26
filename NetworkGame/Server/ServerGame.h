@@ -16,9 +16,9 @@ public:
 	ServerGame();
 	void init();
 	void ServerGameloop();
-	void networkUpdate(b2Vec2 velocity);
+	void networkUpdate(b2Vec2 velocity, int playerId);
 	bool getRunning() { return running; };
-	Player* getPlayer() { return player; };
+	Player* getPlayer(int id) { return players[id]; };
 
 private:
 	static const int screen_widht = 1280;
@@ -40,6 +40,8 @@ private:
 	b2World myWorld;
 
 	Player *player;
+	Player *player1;
+	std::vector<Player*> players;
 
 	float SCALE;
 	bool running = false;

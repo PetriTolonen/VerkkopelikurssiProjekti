@@ -60,7 +60,11 @@ void Game::run()
 	SCALE = 30.f;
 
 	player = new Player("box.png", 50, 500, 0.1f, SCALE);
+	player1 = new Player("box.png", 50, 500, 0.1f, SCALE);
+	players.push_back(player);
+	players.push_back(player1);
 	o_manager.add_object(player);
+	o_manager.add_object(player1);
 
 	//----Hit_Explosion_Animation----//
 	sf::Texture animtexture;
@@ -166,8 +170,6 @@ void Game::gameloop(sf::RenderWindow *window, sf::View *view, MainMenu *main_men
 			o_manager.update(event, window, elapsed.asMilliseconds());
 			o_manager.draw(window);
 
-			player->get_position();
-
 			////----Animations----//
 			//animatedSprite.update(elapsed);
 			//animatedSprite2.update(elapsed);
@@ -189,39 +191,11 @@ void Game::gameloop(sf::RenderWindow *window, sf::View *view, MainMenu *main_men
 				text.setColor(sf::Color::Yellow);
 				text.setString(re_text.str());
 
-				// Create a text
-				std::ostringstream he_text;
-				he_text << "Health: ";
-
-				sf::Text text2;
-				text2.setFont(font);
-				text2.setCharacterSize(50);
-				text2.setStyle(sf::Text::Bold);
-				text2.setColor(sf::Color::Red);
-				text2.setString(he_text.str());
-
-				// Create a text
-				std::ostringstream f_text;
-				f_text << "Fire!";
-
-				sf::Text text3;
-				text3.setFont(font);
-				text3.setCharacterSize(50);
-				text3.setStyle(sf::Text::Bold);
-				text3.setColor(sf::Color::Magenta);
-				text3.setString(f_text.str());
-
 				// Draw it
 				window->setView(window->getDefaultView());
 				sf::FloatRect textRect = text.getLocalBounds();
 				text.setOrigin(textRect.left + textRect.width / 2.0f,
 					textRect.top + textRect.height / 2.0f);
-				sf::FloatRect textRect2 = text2.getLocalBounds();
-				text2.setOrigin(textRect2.left + textRect2.width / 2.0f,
-					textRect2.top + textRect2.height / 2.0f);
-				sf::FloatRect textRect3 = text3.getLocalBounds();
-				text3.setOrigin(textRect3.left + textRect3.width / 2.0f,
-					textRect3.top + textRect3.height / 2.0f);
 
 				player_healtbar_sprite.setOrigin(sf::Vector2f(0, 20));
 				player_healtbar_sprite.setPosition(screen_widht*0.14, screen_height*0.2);
@@ -232,10 +206,7 @@ void Game::gameloop(sf::RenderWindow *window, sf::View *view, MainMenu *main_men
 				player_healtbar__backround_sprite.setScale(sf::Vector2f(0.1 * 100, 1));
 
 				text.setPosition(sf::Vector2f(screen_widht*0.2, (screen_height)*0.1));
-				text2.setPosition(sf::Vector2f(screen_widht*0.1, (screen_height)*0.2));
-				text3.setPosition(sf::Vector2f(screen_widht*0.14 + 300, (screen_height)*0.25));
 				window->draw(text);
-				window->draw(text2);
 			}
 
 			//Window Resized?
@@ -354,9 +325,9 @@ void Game::level_creation()
 	map2.load("tileset_trees.png", sf::Vector2u(256, 256), level_trees, 16, 16);
 }
 
-void Game::networkUpdate(int x, int y)
+void Game::networkUpdate(int id, int x, int y)
 {
-	player->set_position(x, y);
+	players[id]->set_position(x, y);
 }
 
 void Game::show_splash_screen(sf::RenderWindow *window)
