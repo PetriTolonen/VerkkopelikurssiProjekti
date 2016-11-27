@@ -41,6 +41,7 @@ private:
 
 	Player *player;
 	Player *player1;
+	Player *ball;
 	std::vector<Player*> players;
 
 	float SCALE;

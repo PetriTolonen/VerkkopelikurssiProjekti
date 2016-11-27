@@ -45,6 +45,22 @@ void ServerGame::init()
 	player_body1->SetAngularDamping(0);
 	//-----------------------------------------
 
+	//---ball_b2_body---//	
+	b2Body* ball_body = myWorld.CreateBody(&BodyDef);
+
+	b2CircleShape circleShape;
+	b2FixtureDef FixtureDef;
+	FixtureDef.density = 10.f;
+	FixtureDef.friction = 1.0f;
+	FixtureDef.shape = &circleShape;
+	ball_body->SetUserData("player");
+	ball_body->CreateFixture(&FixtureDef);
+	ball_body->SetTransform(b2Vec2(400, 500), 0);
+	// movement dampening
+	ball_body->SetLinearDamping(10);
+	ball_body->SetAngularDamping(0);
+	//-----------------------------------------
+
 	player = new Player(player_body);
 	player1 = new Player(player_body1);
 	players.push_back(player);

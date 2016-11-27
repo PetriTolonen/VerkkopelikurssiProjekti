@@ -60,7 +60,6 @@ namespace
 	std::vector<playerInfo*> players;
 	int receivePacketId;
 	mData* in;
-	sf::Clock timeToCheckAlive;
 }
 
 void serverNetworkThread(ServerGame* game)
@@ -68,11 +67,12 @@ void serverNetworkThread(ServerGame* game)
 	in = new mData();
 	ENetEvent event;
 
-	timeToCheckAlive.restart();
+	sf::Clock timeToCheckAlive;
 
 	/* Wait up to 1000 milliseconds for an event. */
 	while (enet_host_service(server, &event, 1) > 0 || true)
 	{
+		//---- Handle events
 		switch (event.type)
 		{
 		case ENET_EVENT_TYPE_CONNECT:
@@ -88,6 +88,8 @@ void serverNetworkThread(ServerGame* game)
 				players[playerCount]->number = playerCount;
 				playerCount++;
 			}
+
+			timeToCheckAlive.restart();
 
 			break;
 		case ENET_EVENT_TYPE_RECEIVE:
@@ -147,7 +149,7 @@ void serverNetworkThread(ServerGame* game)
 			{
 				for (int i = 0; i < playerCount; i++)
 				{
-					if (event.peer == players[i]->peer)
+					if (event.peer->address.port == players[i]->peer->address.port)
 					{
 						players[i]->connectionAlive = true;
 					}
@@ -170,45 +172,41 @@ void serverNetworkThread(ServerGame* game)
 			event.peer->data = NULL;
 		}
 
-		//---- Remove non alive players
-		if (timeToCheckAlive.getElapsedTime().asSeconds() > 10)
-		{
-			for (size_t i = 0; i < players.size(); i++)
-			{
-				if (players[i]->connectionAlive == false)
-				{
-					if (playerCount > 0)
-					{
-						playerCount--;
-					}					
-				}
-				else
-				{
-					players[i]->connectionAlive = false;
-				}
-			}
-
-			timeToCheckAlive.restart();
-		}		
-
 		//---- Send player position packet to client
 		if (playerCount > 0)
 		{
+			//---- Send to all players
 			for (int i = 0; i < playerCount; i++)
 			{
-				if (players[i]->connectionAlive)
+				for (int x = 0; x < 2; x++)
 				{
-					for (int x = 0; x < 2; x++)
+					pData send;
+					send.x = game->getPlayer(x)->getPos().x;
+					send.y = game->getPlayer(x)->getPos().y;
+					send.r = game->getPlayer(x)->getRot();
+					send.playerId = x;
+					ENetPacket *packet = enet_packet_create(&send, sizeof(pData), ENET_PACKET_FLAG_RELIABLE);
+					enet_peer_send(players[i]->peer, 0, packet);
+				}
+			}
+
+			//---- Remove non alive players
+			if (timeToCheckAlive.getElapsedTime().asSeconds() > 5)
+			{
+				for (int i = 0; i < playerCount; i++)
+				{
+					if (players[i]->connectionAlive == false)
 					{
-						pData send;
-						send.x = game->getPlayer(x)->getPos().x;
-						send.y = game->getPlayer(x)->getPos().y;
-						send.r = game->getPlayer(x)->getRot();
-						send.playerId = x;
-						ENetPacket *packet = enet_packet_create(&send, sizeof(pData), ENET_PACKET_FLAG_RELIABLE);
-						enet_peer_send(players[i]->peer, 0, packet);
+						playerCount--;
+						printf("%08x players online.\n", playerCount);
+					}
+					else
+					{
+						players[i]->connectionAlive = false;
 					}
 				}
+
+				timeToCheckAlive.restart();
 			}
 		}
 	}
