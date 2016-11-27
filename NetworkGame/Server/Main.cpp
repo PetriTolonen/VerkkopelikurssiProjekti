@@ -14,6 +14,8 @@
 //
 #include "ServerGame.h"
 
+#include <SFML\System\Clock.hpp>
+
 enum PacketTypes
 {
 	type_mData = 1,
@@ -58,12 +60,16 @@ namespace
 	std::vector<playerInfo*> players;
 	int receivePacketId;
 	mData* in;
+	sf::Clock timeToCheckAlive;
 }
 
 void serverNetworkThread(ServerGame* game)
 {
 	in = new mData();
 	ENetEvent event;
+
+	timeToCheckAlive.restart();
+
 	/* Wait up to 1000 milliseconds for an event. */
 	while (enet_host_service(server, &event, 1) > 0 || true)
 	{
@@ -81,7 +87,7 @@ void serverNetworkThread(ServerGame* game)
 				players[playerCount]->peer = event.peer;
 				players[playerCount]->number = playerCount;
 				playerCount++;
-			}			
+			}
 
 			break;
 		case ENET_EVENT_TYPE_RECEIVE:
@@ -134,7 +140,7 @@ void serverNetworkThread(ServerGame* game)
 					{
 						game->networkUpdate(b2Vec2(float(intX * 30), float(intY * 30)), 1);
 					}
-					
+
 					break;
 				}
 			case type_aData:
@@ -164,6 +170,27 @@ void serverNetworkThread(ServerGame* game)
 			event.peer->data = NULL;
 		}
 
+		//---- Remove non alive players
+		if (timeToCheckAlive.getElapsedTime().asSeconds() > 10)
+		{
+			for (size_t i = 0; i < players.size(); i++)
+			{
+				if (players[i]->connectionAlive == false)
+				{
+					if (playerCount > 0)
+					{
+						playerCount--;
+					}					
+				}
+				else
+				{
+					players[i]->connectionAlive = false;
+				}
+			}
+
+			timeToCheckAlive.restart();
+		}		
+
 		//---- Send player position packet to client
 		if (playerCount > 0)
 		{
@@ -180,8 +207,8 @@ void serverNetworkThread(ServerGame* game)
 						send.playerId = x;
 						ENetPacket *packet = enet_packet_create(&send, sizeof(pData), ENET_PACKET_FLAG_RELIABLE);
 						enet_peer_send(players[i]->peer, 0, packet);
-					}					
-				}				
+					}
+				}
 			}
 		}
 	}
