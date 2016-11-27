@@ -60,6 +60,7 @@ namespace
 	std::vector<playerInfo*> players;
 	int receivePacketId;
 	mData* in;
+	float veloScale;
 }
 
 void serverNetworkThread(ServerGame* game)
@@ -134,13 +135,15 @@ void serverNetworkThread(ServerGame* game)
 						intY = -1;
 					}
 
+					veloScale = 90;
+
 					if (event.peer->address.port == players[0]->peer->address.port)
 					{
-						game->networkUpdate(b2Vec2(float(intX * 30), float(intY * 30)), 0);
+						game->networkUpdate(b2Vec2(float(intX * veloScale), float(intY * veloScale)), 0);
 					}
 					else
 					{
-						game->networkUpdate(b2Vec2(float(intX * 30), float(intY * 30)), 1);
+						game->networkUpdate(b2Vec2(float(intX * veloScale), float(intY * veloScale)), 1);
 					}
 
 					break;

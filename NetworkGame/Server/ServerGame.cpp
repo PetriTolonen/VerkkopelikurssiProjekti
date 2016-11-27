@@ -125,15 +125,13 @@ void ServerGame::init()
 	b2CircleShape circleShape;
 	circleShape.m_radius = 20;
 	b2FixtureDef FixtureDefCircle;
-	FixtureDefCircle.density = 10.f;
-	FixtureDefCircle.friction = 0.2f;
+	FixtureDefCircle.density = 100.f;
+	FixtureDefCircle.friction = 0.8f;
+	FixtureDefCircle.restitution = 0.2f;
 	FixtureDefCircle.shape = &circleShape;
 	ball_body->SetUserData("ball");
 	ball_body->CreateFixture(&FixtureDefCircle);
 	ball_body->SetTransform(b2Vec2(640, 360), 0);
-	// movement dampening
-	ball_body->SetLinearDamping(0.1);
-	ball_body->SetAngularDamping(0.1);
 	//-----------------------------------------
 
 	player = new Player(player_body);
