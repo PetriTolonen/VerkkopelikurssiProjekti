@@ -36,10 +36,13 @@ void Game::run()
 
 	player = new Player("box.png", 50, 500, 0.1f, SCALE);
 	player1 = new Player("box.png", 50, 500, 0.1f, SCALE);
+	ball = new Player("ball.png", 0, 0, 0.1f, SCALE);
 	players.push_back(player);
 	players.push_back(player1);
+	players.push_back(ball);
 	o_manager.add_object(player);
 	o_manager.add_object(player1);
+	o_manager.add_object(ball);
 
 	//----Hit_Explosion_Animation----//
 	sf::Texture animtexture;

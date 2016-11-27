@@ -172,13 +172,13 @@ void serverNetworkThread(ServerGame* game)
 			event.peer->data = NULL;
 		}
 
-		//---- Send player position packet to client
+		//---- Send player position packets to client
 		if (playerCount > 0)
 		{
 			//---- Send to all players
 			for (int i = 0; i < playerCount; i++)
 			{
-				for (int x = 0; x < 2; x++)
+				for (int x = 0; x < 3; x++)
 				{
 					pData send;
 					send.x = game->getPlayer(x)->getPos().x;

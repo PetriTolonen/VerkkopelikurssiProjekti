@@ -69,6 +69,7 @@ private:
 
 	Player *player;
 	Player *player1;
+	Player *ball;
 	std::vector<Player*> players;
 	sf::Clock clock;
 	float SCALE;
