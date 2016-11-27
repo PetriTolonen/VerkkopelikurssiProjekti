@@ -10,6 +10,7 @@ public:
 	void update();
 
 	b2Vec2 getPos();
+	float getRot();
 
 	void handleBodyAngularVelocity(float velAngular);
 	void handleBodyLinearVelocity(b2Vec2 velocity);

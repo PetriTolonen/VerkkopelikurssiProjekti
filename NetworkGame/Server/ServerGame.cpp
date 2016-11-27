@@ -13,7 +13,7 @@ void ServerGame::init()
 	myWorld.SetContactListener(ContactListener);
 
 	//----Scale
-	SCALE = 30.f;
+	SCALE = 1.f;
 
 	//---player_b2_body---//	
 	b2BodyDef BodyDef;
@@ -21,7 +21,7 @@ void ServerGame::init()
 	b2Body* player_body = myWorld.CreateBody(&BodyDef);
 
 	b2PolygonShape Shape;
-	Shape.SetAsBox((31.f) / SCALE, (66.f) / SCALE);
+	Shape.SetAsBox((20.f) / SCALE, (20.f) / SCALE);
 	b2FixtureDef FixtureDef;
 	FixtureDef.density = 10.f;
 	FixtureDef.friction = 1.0f;
@@ -34,7 +34,7 @@ void ServerGame::init()
 	player_body->SetAngularDamping(0);
 	//-----------------------------------------
 
-	//---player_b2_body---//	
+	//---player_b2_body---//
 	b2Body* player_body1 = myWorld.CreateBody(&BodyDef);
 
 	player_body1->SetUserData("player1");

@@ -72,7 +72,7 @@ void Player::on_draw(sf::RenderWindow* win)
 
 void Player::set_rotation(float rot)
 {
-	//rotation = rot;
+	get_sprite().setRotation(rot);
 }
 
 void Player::set_animation_has_played()

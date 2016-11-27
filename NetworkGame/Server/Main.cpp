@@ -33,6 +33,7 @@ struct pData
 	int playerId = 0;
 	int x = 0;
 	int y = 0;
+	int r = 0;
 };
 
 struct aData
@@ -44,7 +45,7 @@ struct aData
 struct playerInfo
 {
 	ENetPeer *peer;
-	bool connectionAlive;
+	bool connectionAlive = false;
 	int number;
 };
 
@@ -175,6 +176,7 @@ void serverNetworkThread(ServerGame* game)
 						pData send;
 						send.x = game->getPlayer(x)->getPos().x;
 						send.y = game->getPlayer(x)->getPos().y;
+						send.r = game->getPlayer(x)->getRot();
 						send.playerId = x;
 						ENetPacket *packet = enet_packet_create(&send, sizeof(pData), ENET_PACKET_FLAG_RELIABLE);
 						enet_peer_send(players[i]->peer, 0, packet);

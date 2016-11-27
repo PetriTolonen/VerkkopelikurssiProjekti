@@ -26,38 +26,13 @@ void Game::run()
 	begin_of_game = 0;
 	_game_state = Game::showing_splash;
 
-	boxTexture.loadFromFile("box.png");
-	//--------------------------//
-
-	//---death_image--//
-	if (deathImage.loadFromFile("game_over.png") != true)
-	{
-		return;
-	}
-
-	game_over_sprite.setTexture(deathImage);
 	//---after_death_timer---//
 	time_passed_after_death = 60 * 10;
 
 	score = 0;
 
-	//---player_life_bar---//
-	if (player_healtbar_texture.loadFromFile("box.png") != true)
-	{
-		return;
-	}
-
-	player_healtbar_sprite.setTexture(player_healtbar_texture);
-
-	if (player_healtbar_texture_backround.loadFromFile("life_bar_back.png") != true)
-	{
-		return;
-	}
-
-	player_healtbar__backround_sprite.setTexture(player_healtbar_texture_backround);
-
 	//----Scale
-	SCALE = 30.f;
+	SCALE = 1.f;
 
 	player = new Player("box.png", 50, 500, 0.1f, SCALE);
 	player1 = new Player("box.png", 50, 500, 0.1f, SCALE);
@@ -197,14 +172,6 @@ void Game::gameloop(sf::RenderWindow *window, sf::View *view, MainMenu *main_men
 				text.setOrigin(textRect.left + textRect.width / 2.0f,
 					textRect.top + textRect.height / 2.0f);
 
-				player_healtbar_sprite.setOrigin(sf::Vector2f(0, 20));
-				player_healtbar_sprite.setPosition(screen_widht*0.14, screen_height*0.2);
-				player_healtbar_sprite.setScale(sf::Vector2f(0.1*player->get_health(), 1));
-
-				player_healtbar__backround_sprite.setOrigin(sf::Vector2f(0, 20));
-				player_healtbar__backround_sprite.setPosition(screen_widht*0.14, screen_height*0.2);
-				player_healtbar__backround_sprite.setScale(sf::Vector2f(0.1 * 100, 1));
-
 				text.setPosition(sf::Vector2f(screen_widht*0.2, (screen_height)*0.1));
 				window->draw(text);
 			}
@@ -325,9 +292,10 @@ void Game::level_creation()
 	map2.load("tileset_trees.png", sf::Vector2u(256, 256), level_trees, 16, 16);
 }
 
-void Game::networkUpdate(int id, int x, int y)
+void Game::networkUpdate(int id, int x, int y, int r)
 {
 	players[id]->set_position(x, y);
+	players[id]->set_rotation(r);
 }
 
 void Game::show_splash_screen(sf::RenderWindow *window)

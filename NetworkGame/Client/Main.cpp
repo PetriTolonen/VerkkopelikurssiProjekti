@@ -13,6 +13,7 @@
 //
 #include <stdio.h>
 #include <string>
+#include <iostream>
 
 #define PORT 8888   //The port
 
@@ -35,6 +36,7 @@ struct pData
 	int playerId = 0;
 	int x = 0;
 	int y = 0;
+	int r = 0;
 };
 
 struct aData
@@ -60,7 +62,7 @@ namespace
 
 void netWorkThread(Game *game)
 {
-	pData* in = new pData();
+	in = new pData();
 	posX = 0.0f;
 
 	aliveSendTime.restart();
@@ -93,7 +95,7 @@ void netWorkThread(Game *game)
 				{
 					std::memcpy(in, &*event.packet->data, sizeof(pData));
 
-					game->networkUpdate(in->playerId, in->x, in->y);
+					game->networkUpdate(in->playerId, in->x, in->y, in->r);
 					break;
 				}				
 				case type_mData:
@@ -132,12 +134,13 @@ void netWorkThread(Game *game)
 		}
 
 		// Im alive
-		if (aliveSendTime.getElapsedTime().asSeconds() > 1)
+		if (aliveSendTime.getElapsedTime().asSeconds() > 2)
 		{
 			aData send;
 			send.connectionAlive = 1;
 			ENetPacket *packet = enet_packet_create(&send, sizeof(aData), ENET_PACKET_FLAG_RELIABLE);
 			enet_peer_send(peer, 0, packet);
+			aliveSendTime.restart();
 		}
 	}
 }
@@ -163,7 +166,12 @@ int main()
 		exit(EXIT_FAILURE);
 	}
 
-	enet_address_set_host(&address, "localhost");
+	char iostreamaddress[20];
+
+	std::cout<<"Give server IP address" << std::endl;
+	std::cin.getline(iostreamaddress, 20);
+
+	enet_address_set_host(&address, iostreamaddress);
 	address.port = PORT;
 
 	// c. Connect and user service

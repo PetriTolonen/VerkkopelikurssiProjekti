@@ -21,7 +21,7 @@ public:
 	void run();
 	void gameloop(sf::RenderWindow *window, sf::View *view, MainMenu *main_menu);
 	void level_creation();
-	void networkUpdate(int id, int x, int y);
+	void networkUpdate(int id, int x, int y, int r);
 	bool getRunning() { return running; };
 	Player* getPlayer(int id) { return players[id]; };
 
@@ -60,16 +60,6 @@ private:
 	int modulo_int;
 
 	//----Init
-
-	sf::Texture boxTexture;
-	sf::Texture deathImage;
-	sf::Texture player_healtbar_texture;
-	sf::Sprite player_healtbar_sprite;
-	sf::Texture player_healtbar_texture_backround;
-	sf::Sprite player_healtbar__backround_sprite;
-
-	sf::Sprite game_over_sprite;
-
 	AnimatedSprite animatedSprite;
 	Animation* currentAnimation;
 	AnimatedSprite animatedSprite2;

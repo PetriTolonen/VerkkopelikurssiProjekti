@@ -15,6 +15,11 @@ b2Vec2 Player::getPos()
 	return playerBody->GetPosition();;
 }
 
+float Player::getRot()
+{
+	return playerBody->GetAngle();
+}
+
 void Player::handleBodyAngularVelocity(float velAngular)
 {
 	playerBody->SetAngularVelocity(velAngular);
