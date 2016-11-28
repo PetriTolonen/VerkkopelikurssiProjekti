@@ -35,9 +35,9 @@ struct pData
 {
 	int id = type_pData;
 	int playerId = 0;
-	int x = 0;
-	int y = 0;
-	int r = 0;
+	float x = 0;
+	float y = 0;
+	float r = 0;
 };
 
 struct aData

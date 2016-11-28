@@ -21,7 +21,7 @@ public:
 	void run();
 	void gameloop(sf::RenderWindow *window, sf::View *view, MainMenu *main_menu);
 	void level_creation();
-	void networkUpdate(int id, int x, int y, int r);
+	void networkUpdate(int id, float x, float y, int r);
 	bool getRunning() { return running; };
 	Player* getPlayer(int id) { return players[id]; };
 

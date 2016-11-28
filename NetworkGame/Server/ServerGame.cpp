@@ -13,7 +13,7 @@ void ServerGame::init()
 	myWorld.SetContactListener(ContactListener);
 
 	//----Scale
-	SCALE = 1.f;
+	SCALE = 40.f;
 	
 	//----Walls
 	//createWall(myWorld, 1280, 32, 640, 16, SCALE);
@@ -32,7 +32,7 @@ void ServerGame::init()
 	WallFixtureDef.shape = &WallShape;
 	wallupper_body->SetUserData("wall");
 	wallupper_body->CreateFixture(&WallFixtureDef);
-	wallupper_body->SetTransform(b2Vec2(x, y), 0);
+	wallupper_body->SetTransform(b2Vec2(x / SCALE, y / SCALE), 0);
 
 	//createWall(myWorld, 1280, 32, 640, 704, SCALE);
 	w = 1280;
@@ -50,7 +50,7 @@ void ServerGame::init()
 	WallFixtureDef1.shape = &WallShape1;
 	wallupper_body1->SetUserData("wall");
 	wallupper_body1->CreateFixture(&WallFixtureDef1);
-	wallupper_body1->SetTransform(b2Vec2(x, y), 0);
+	wallupper_body1->SetTransform(b2Vec2(x / SCALE, y / SCALE), 0);
 
 	//createWall(myWorld, 32, 720, 16, 360, SCALE);
 	w = 32;
@@ -68,7 +68,7 @@ void ServerGame::init()
 	WallFixtureDef2.shape = &WallShape2;
 	wallupper_body2->SetUserData("wall");
 	wallupper_body2->CreateFixture(&WallFixtureDef2);
-	wallupper_body2->SetTransform(b2Vec2(x, y), 0);
+	wallupper_body2->SetTransform(b2Vec2(x / SCALE, y / SCALE), 0);
 
 	//createWall(myWorld, 32, 720, 1264, 360, SCALE);
 	w = 32;
@@ -86,7 +86,7 @@ void ServerGame::init()
 	WallFixtureDef3.shape = &WallShape3;
 	wallupper_body3->SetUserData("wall");
 	wallupper_body3->CreateFixture(&WallFixtureDef3);
-	wallupper_body3->SetTransform(b2Vec2(x, y), 0);
+	wallupper_body3->SetTransform(b2Vec2(x / SCALE, y / SCALE), 0);
 	//-----------------------------------------
 
 	//---player_b2_body---//	
@@ -103,7 +103,7 @@ void ServerGame::init()
 	FixtureDef.shape = &Shape;
 	player_body->SetUserData("player");
 	player_body->CreateFixture(&FixtureDef);
-	player_body->SetTransform(b2Vec2(128, 360), 0);
+	player_body->SetTransform(b2Vec2(128 / SCALE, 360 / SCALE), 0);
 	// movement dampening
 	player_body->SetLinearDamping(0.1);
 	player_body->SetAngularDamping(0.1);
@@ -114,7 +114,7 @@ void ServerGame::init()
 
 	player_body1->SetUserData("player1");
 	player_body1->CreateFixture(&FixtureDef);
-	player_body1->SetTransform(b2Vec2(1152, 360), 0);
+	player_body1->SetTransform(b2Vec2(1152 / SCALE, 360 / SCALE), 0);
 	// movement dampening
 	player_body1->SetLinearDamping(0.1);
 	player_body1->SetAngularDamping(0.1);
@@ -124,7 +124,7 @@ void ServerGame::init()
 	b2Body* ball_body = myWorld.CreateBody(&BodyDef);
 
 	b2CircleShape circleShape;
-	circleShape.m_radius = 20;
+	circleShape.m_radius = 20.f / SCALE;
 	b2FixtureDef FixtureDefCircle;
 	FixtureDefCircle.density = 0.05f;
 	FixtureDefCircle.friction = 0.2f;
@@ -132,7 +132,7 @@ void ServerGame::init()
 	FixtureDefCircle.shape = &circleShape;
 	ball_body->SetUserData("ball");
 	ball_body->CreateFixture(&FixtureDefCircle);
-	ball_body->SetTransform(b2Vec2(640, 360), 0);
+	ball_body->SetTransform(b2Vec2(640 / SCALE, 360 / SCALE), 0);
 	ball_body->SetLinearDamping(0.01);
 	ball_body->SetAngularDamping(0.1);
 	//-----------------------------------------

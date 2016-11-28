@@ -54,8 +54,8 @@ void Player::on_update(sf::Event event, sf::RenderWindow* win, float elapsed)
 
 void Player::set_position(float x, float y)
 {
-	this->posX = x;//*worldScale;
-	this->posY = y;//*worldScale;
+	this->posX = x*worldScale;
+	this->posY = y*worldScale;
 
 	get_sprite().setPosition(posX, posY);
 }

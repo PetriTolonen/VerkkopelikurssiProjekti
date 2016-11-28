@@ -32,7 +32,7 @@ void Game::run()
 	score = 0;
 
 	//----Scale
-	SCALE = 1.f;
+	SCALE = 40.f;
 
 	player = new Player("box.png", 50, 500, 0.1f, SCALE);
 	player1 = new Player("box.png", 50, 500, 0.1f, SCALE);
@@ -271,7 +271,7 @@ void Game::level_creation()
 	map.load("tileset_green_backround.png", sf::Vector2u(128, 128), level, 32, 32);
 }
 
-void Game::networkUpdate(int id, int x, int y, int r)
+void Game::networkUpdate(int id, float x, float y, int r)
 {
 	players[id]->set_position(x, y);
 	players[id]->set_rotation(r);

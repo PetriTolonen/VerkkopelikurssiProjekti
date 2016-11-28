@@ -16,6 +16,8 @@
 
 #include <SFML\System\Clock.hpp>
 
+#include <math.h>
+
 enum PacketTypes
 {
 	type_mData = 1,
@@ -34,9 +36,9 @@ struct pData
 {
 	int id = type_pData;
 	int playerId = 0;
-	int x = 0;
-	int y = 0;
-	int r = 0;
+	float x = 0;
+	float y = 0;
+	float r = 0;
 };
 
 struct aData
@@ -139,7 +141,7 @@ void serverNetworkThread(ServerGame* game)
 						intY = -1;
 					}
 
-					veloScale = 10000;
+					veloScale = 0.25;
 					rotVelScale = 0.9;
 
 					if (event.peer->address.port == players[0]->peer->address.port)
