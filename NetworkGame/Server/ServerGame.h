@@ -16,7 +16,7 @@ public:
 	ServerGame();
 	void init();
 	void ServerGameloop();
-	void networkUpdate(b2Vec2 velocity, int playerId);
+	void networkUpdate(b2Vec2 velocity, float angVel, int playerId);
 	bool getRunning() { return running; };
 	Player* getPlayer(int id) { return players[id]; };
 

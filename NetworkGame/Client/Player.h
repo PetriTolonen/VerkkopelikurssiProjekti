@@ -24,6 +24,7 @@ public:
 	bool get_has_animation_played();
 
 	int getNetworkMove();
+	int getNetworkRotate();
 	void zeroNetworkMove();
 	bool getMoves() { return moves; }
 
@@ -35,6 +36,7 @@ private:
 	bool animation_has_played;
 
 	sf::Vector2i networkMove;
+	int networkRot;
 	bool moves = false;
 };
 

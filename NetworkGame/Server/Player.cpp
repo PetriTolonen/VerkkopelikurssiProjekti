@@ -27,5 +27,5 @@ void Player::handleBodyAngularVelocity(float velAngular)
 
 void Player::handleBodyLinearVelocity(b2Vec2 velocity)
 {
-	playerBody->SetLinearVelocity(velocity);
+	playerBody->ApplyLinearImpulse(velocity, playerBody->GetLocalCenter(), true);
 }

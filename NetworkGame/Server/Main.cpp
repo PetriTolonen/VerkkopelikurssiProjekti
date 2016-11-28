@@ -27,6 +27,7 @@ struct mData
 {
 	int id = type_mData;
 	int dir = 0;
+	int rot = 0;
 };
 
 struct pData
@@ -61,6 +62,7 @@ namespace
 	int receivePacketId;
 	mData* in;
 	float veloScale;
+	float rotVelScale;
 }
 
 void serverNetworkThread(ServerGame* game)
@@ -69,10 +71,12 @@ void serverNetworkThread(ServerGame* game)
 	ENetEvent event;
 
 	sf::Clock timeToCheckAlive;
+	sf::Clock time;
 
 	/* Wait up to 1000 milliseconds for an event. */
 	while (enet_host_service(server, &event, 1) > 0 || true)
 	{
+		sf::Time elapsed = time.getElapsedTime();
 		//---- Handle events
 		switch (event.type)
 		{
@@ -94,11 +98,11 @@ void serverNetworkThread(ServerGame* game)
 
 			break;
 		case ENET_EVENT_TYPE_RECEIVE:
-			printf("A packet of length %u containing %08x was received from %s on channel %u.\n",
-				event.packet->dataLength,
-				*event.packet->data,
-				event.peer->data,
-				event.channelID);
+			//printf("A packet of length %u containing %08x was received from %s on channel %u.\n",
+			//	event.packet->dataLength,
+			//	*event.packet->data,
+			//	event.peer->data,
+			//	event.channelID);
 
 			receivePacketId = (int)*event.packet->data;
 			switch (receivePacketId)
@@ -135,15 +139,16 @@ void serverNetworkThread(ServerGame* game)
 						intY = -1;
 					}
 
-					veloScale = 90;
+					veloScale = 10000;
+					rotVelScale = 0.9;
 
 					if (event.peer->address.port == players[0]->peer->address.port)
 					{
-						game->networkUpdate(b2Vec2(float(intX * veloScale), float(intY * veloScale)), 0);
+						game->networkUpdate(b2Vec2(float(intX * veloScale), float(intY * veloScale)), float(in->rot)*rotVelScale, 0);
 					}
 					else
 					{
-						game->networkUpdate(b2Vec2(float(intX * veloScale), float(intY * veloScale)), 1);
+						game->networkUpdate(b2Vec2(float(intX * veloScale), float(intY * veloScale)), float(in->rot)*rotVelScale, 1);
 					}
 
 					break;
@@ -176,7 +181,7 @@ void serverNetworkThread(ServerGame* game)
 		}
 
 		//---- Send player position packets to client
-		if (playerCount > 0)
+		if (playerCount > 0 && elapsed.asMilliseconds() > 10)
 		{
 			//---- Send to all players
 			for (int i = 0; i < playerCount; i++)

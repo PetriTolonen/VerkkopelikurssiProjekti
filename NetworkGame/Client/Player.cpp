@@ -44,6 +44,12 @@ void Player::on_update(sf::Event event, sf::RenderWindow* win, float elapsed)
 		networkMove.x = 1;
 		moves = true;
 	}
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+	{
+		networkRot = 1;
+		moves = true;
+	}
 }
 
 void Player::set_position(float x, float y)
@@ -92,7 +98,7 @@ bool Player::get_has_animation_played()
 
 int Player::getNetworkMove()
 {
-	int dir;
+	int dir = 9;
 	if (networkMove.x >= 1)
 	{
 		dir = 0;
@@ -113,8 +119,15 @@ int Player::getNetworkMove()
 	return dir;
 }
 
+int Player::getNetworkRotate()
+{
+	int rot = networkRot;
+	return rot;
+}
+
 void Player::zeroNetworkMove()
 {
 	networkMove = sf::Vector2i(0, 0); 
+	networkRot = 0;
 	moves = false;
 }

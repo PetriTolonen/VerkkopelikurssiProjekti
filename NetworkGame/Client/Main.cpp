@@ -28,6 +28,7 @@ struct mData
 {
 	int id = type_mData;
 	int dir;
+	int rot = 0;
 };
 
 struct pData
@@ -57,13 +58,16 @@ namespace
 	int eventStatus;
 	int receivePacketId;
 	pData* in;
-	sf::Clock aliveSendTime;
+
 }
 
 void netWorkThread(Game *game)
 {
 	in = new pData();
 	posX = 0.0f;
+
+	sf::Clock aliveSendTime;
+	sf::Clock time;
 
 	aliveSendTime.restart();
 
@@ -80,11 +84,11 @@ void netWorkThread(Game *game)
 			event.peer->data = "Client information";
 			break;
 		case ENET_EVENT_TYPE_RECEIVE:
-			printf("A packet of length %u containing %08x was received from %s on channel %u.\n",
-				event.packet->dataLength,
-				*event.packet->data,
-				event.peer->data,
-				event.channelID);
+			//printf("A packet of length %u containing %08x was received from %s on channel %u.\n",
+			//	event.packet->dataLength,
+			//	*event.packet->data,
+			//	event.peer->data,
+			//	event.channelID);
 
 			if (game && game->getRunning())
 			{
@@ -127,6 +131,7 @@ void netWorkThread(Game *game)
 		{
 			mData send;
 			if (game->getPlayer(0)->getMoves()) {
+				send.rot = game->getPlayer(0)->getNetworkRotate();
 				send.dir = game->getPlayer(0)->getNetworkMove();
 				ENetPacket *packet = enet_packet_create(&send, sizeof(mData), ENET_PACKET_FLAG_RELIABLE);
 				enet_peer_send(peer, 0, packet);

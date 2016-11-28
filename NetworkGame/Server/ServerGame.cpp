@@ -99,13 +99,14 @@ void ServerGame::init()
 	b2FixtureDef FixtureDef;
 	FixtureDef.density = 10.f;
 	FixtureDef.friction = 1.0f;
+	FixtureDef.restitution = 0.8f;
 	FixtureDef.shape = &Shape;
 	player_body->SetUserData("player");
 	player_body->CreateFixture(&FixtureDef);
 	player_body->SetTransform(b2Vec2(128, 360), 0);
 	// movement dampening
-	player_body->SetLinearDamping(10);
-	player_body->SetAngularDamping(5);
+	player_body->SetLinearDamping(0.1);
+	player_body->SetAngularDamping(0.1);
 	//-----------------------------------------
 
 	//---player_b2_body---//
@@ -115,8 +116,8 @@ void ServerGame::init()
 	player_body1->CreateFixture(&FixtureDef);
 	player_body1->SetTransform(b2Vec2(1152, 360), 0);
 	// movement dampening
-	player_body1->SetLinearDamping(10);
-	player_body1->SetAngularDamping(5);
+	player_body1->SetLinearDamping(0.1);
+	player_body1->SetAngularDamping(0.1);
 	//-----------------------------------------
 
 	//---ball_b2_body---//	
@@ -125,13 +126,15 @@ void ServerGame::init()
 	b2CircleShape circleShape;
 	circleShape.m_radius = 20;
 	b2FixtureDef FixtureDefCircle;
-	FixtureDefCircle.density = 100.f;
-	FixtureDefCircle.friction = 0.8f;
-	FixtureDefCircle.restitution = 0.2f;
+	FixtureDefCircle.density = 0.05f;
+	FixtureDefCircle.friction = 0.2f;
+	FixtureDefCircle.restitution = 0.8f;
 	FixtureDefCircle.shape = &circleShape;
 	ball_body->SetUserData("ball");
 	ball_body->CreateFixture(&FixtureDefCircle);
 	ball_body->SetTransform(b2Vec2(640, 360), 0);
+	ball_body->SetLinearDamping(0.01);
+	ball_body->SetAngularDamping(0.1);
 	//-----------------------------------------
 
 	player = new Player(player_body);
@@ -190,14 +193,16 @@ void ServerGame::ServerGameloop()
 	delete ContactListener;
 }
 
-void ServerGame::networkUpdate(b2Vec2 velocity, int playerId)
+void ServerGame::networkUpdate(b2Vec2 velocity, float angVel, int playerId)
 {
 	if (playerId == 1)
 	{
 		player->handleBodyLinearVelocity(velocity);
+		player->handleBodyAngularVelocity(angVel);
 	}
 	else
 	{
 		player1->handleBodyLinearVelocity(velocity);
+		player1->handleBodyAngularVelocity(angVel);
 	}
 }
