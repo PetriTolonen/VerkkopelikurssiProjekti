@@ -142,7 +142,7 @@ void serverNetworkThread(ServerGame* game)
 					}
 
 					veloScale = 0.25;
-					kickForce = 0.01;
+					kickForce = 0.002;
 
 					if (event.peer->address.port == players[0]->peer->address.port)
 					{

@@ -27,7 +27,7 @@ void Player::handleBodyKick(float force, b2Body* ball)
 
 	dir.Normalize();
 
-	if (lenght < 2.f)
+	if (lenght < 1.8f)
 	{
 		dir.x = dir.x * force;
 		dir.y = dir.y * force;
