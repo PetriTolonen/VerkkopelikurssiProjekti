@@ -12,8 +12,10 @@ public:
 	b2Vec2 getPos();
 	float getRot();
 
-	void handleBodyAngularVelocity(float velAngular);
+	void handleBodyKick(float force, b2Body* ball);
 	void handleBodyLinearVelocity(b2Vec2 velocity);
+
+	b2Body* getBody();
 
 private:
 	b2Body* playerBody;

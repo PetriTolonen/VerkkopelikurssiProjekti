@@ -30,6 +30,8 @@ void ServerGame::init()
 	WallShape.SetAsBox((w / 2) / SCALE, (h / 2) / SCALE);
 	b2FixtureDef WallFixtureDef;
 	WallFixtureDef.shape = &WallShape;
+	WallFixtureDef.restitution = 1.f;
+	WallFixtureDef.friction = 1.f;
 	wallupper_body->SetUserData("wall");
 	wallupper_body->CreateFixture(&WallFixtureDef);
 	wallupper_body->SetTransform(b2Vec2(x / SCALE, y / SCALE), 0);
@@ -48,6 +50,8 @@ void ServerGame::init()
 	WallShape1.SetAsBox((w / 2) / SCALE, (h / 2) / SCALE);
 	b2FixtureDef WallFixtureDef1;
 	WallFixtureDef1.shape = &WallShape1;
+	WallFixtureDef1.restitution = 1.f;
+	WallFixtureDef1.friction = 1.f;
 	wallupper_body1->SetUserData("wall");
 	wallupper_body1->CreateFixture(&WallFixtureDef1);
 	wallupper_body1->SetTransform(b2Vec2(x / SCALE, y / SCALE), 0);
@@ -66,6 +70,8 @@ void ServerGame::init()
 	WallShape2.SetAsBox((w / 2) / SCALE, (h / 2) / SCALE);
 	b2FixtureDef WallFixtureDef2;
 	WallFixtureDef2.shape = &WallShape2;
+	WallFixtureDef2.restitution = 1.f;
+	WallFixtureDef2.friction = 1.f;
 	wallupper_body2->SetUserData("wall");
 	wallupper_body2->CreateFixture(&WallFixtureDef2);
 	wallupper_body2->SetTransform(b2Vec2(x / SCALE, y / SCALE), 0);
@@ -84,6 +90,8 @@ void ServerGame::init()
 	WallShape3.SetAsBox((w / 2) / SCALE, (h / 2) / SCALE);
 	b2FixtureDef WallFixtureDef3;
 	WallFixtureDef3.shape = &WallShape3;
+	WallFixtureDef3.restitution = 1.f;
+	WallFixtureDef3.friction = 1.f;
 	wallupper_body3->SetUserData("wall");
 	wallupper_body3->CreateFixture(&WallFixtureDef3);
 	wallupper_body3->SetTransform(b2Vec2(x / SCALE, y / SCALE), 0);
@@ -92,6 +100,7 @@ void ServerGame::init()
 	//---player_b2_body---//	
 	b2BodyDef BodyDef;
 	BodyDef.type = b2_dynamicBody;
+	BodyDef.fixedRotation = true;
 	b2Body* player_body = myWorld.CreateBody(&BodyDef);
 
 	b2PolygonShape Shape;
@@ -121,14 +130,16 @@ void ServerGame::init()
 	//-----------------------------------------
 
 	//---ball_b2_body---//	
-	b2Body* ball_body = myWorld.CreateBody(&BodyDef);
+	b2BodyDef BodyDefBall;
+	BodyDefBall.type = b2_dynamicBody;
+	b2Body* ball_body = myWorld.CreateBody(&BodyDefBall);
 
 	b2CircleShape circleShape;
 	circleShape.m_radius = 20.f / SCALE;
 	b2FixtureDef FixtureDefCircle;
 	FixtureDefCircle.density = 0.05f;
-	FixtureDefCircle.friction = 0.2f;
-	FixtureDefCircle.restitution = 0.8f;
+	FixtureDefCircle.friction = 0.01f;
+	FixtureDefCircle.restitution = 1.f;
 	FixtureDefCircle.shape = &circleShape;
 	ball_body->SetUserData("ball");
 	ball_body->CreateFixture(&FixtureDefCircle);
@@ -193,16 +204,16 @@ void ServerGame::ServerGameloop()
 	delete ContactListener;
 }
 
-void ServerGame::networkUpdate(b2Vec2 velocity, float angVel, int playerId)
+void ServerGame::networkUpdate(b2Vec2 velocity, float force, int playerId)
 {
 	if (playerId == 1)
 	{
 		player->handleBodyLinearVelocity(velocity);
-		player->handleBodyAngularVelocity(angVel);
+		player->handleBodyKick(force, ball->getBody());
 	}
 	else
 	{
 		player1->handleBodyLinearVelocity(velocity);
-		player1->handleBodyAngularVelocity(angVel);
+		player1->handleBodyKick(force, ball->getBody());
 	}
 }

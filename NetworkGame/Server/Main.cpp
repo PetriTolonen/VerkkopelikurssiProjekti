@@ -64,7 +64,7 @@ namespace
 	int receivePacketId;
 	mData* in;
 	float veloScale;
-	float rotVelScale;
+	float kickForce;
 }
 
 void serverNetworkThread(ServerGame* game)
@@ -142,15 +142,15 @@ void serverNetworkThread(ServerGame* game)
 					}
 
 					veloScale = 0.25;
-					rotVelScale = 0.9;
+					kickForce = 0.01;
 
 					if (event.peer->address.port == players[0]->peer->address.port)
 					{
-						game->networkUpdate(b2Vec2(float(intX * veloScale), float(intY * veloScale)), float(in->rot)*rotVelScale, 0);
+						game->networkUpdate(b2Vec2(float(intX * veloScale), float(intY * veloScale)), float(in->rot)*kickForce, 0);
 					}
 					else
 					{
-						game->networkUpdate(b2Vec2(float(intX * veloScale), float(intY * veloScale)), float(in->rot)*rotVelScale, 1);
+						game->networkUpdate(b2Vec2(float(intX * veloScale), float(intY * veloScale)), float(in->rot)*kickForce, 1);
 					}
 
 					break;

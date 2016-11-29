@@ -20,12 +20,27 @@ float Player::getRot()
 	return playerBody->GetAngle();
 }
 
-void Player::handleBodyAngularVelocity(float velAngular)
+void Player::handleBodyKick(float force, b2Body* ball)
 {
-	playerBody->SetAngularVelocity(velAngular);
+	b2Vec2 dir = ball->GetPosition() - playerBody->GetPosition();
+	float lenght = dir.Length();
+
+	dir.Normalize();
+
+	if (lenght < 2.f)
+	{
+		dir.x = dir.x * force;
+		dir.y = dir.y * force;
+		ball->ApplyLinearImpulse(dir, ball->GetLocalCenter(), true);
+	}
 }
 
 void Player::handleBodyLinearVelocity(b2Vec2 velocity)
 {
 	playerBody->ApplyLinearImpulse(velocity, playerBody->GetLocalCenter(), true);
+}
+
+b2Body * Player::getBody()
+{
+	return playerBody;
 }
