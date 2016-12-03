@@ -271,7 +271,7 @@ void Game::level_creation()
 	map.load("tileset_green_backround.png", sf::Vector2u(128, 128), level, 32, 32);
 }
 
-void Game::networkUpdate(int id, float x, float y, int r)
+void Game::networkUpdate(int id, float x, float y, float r)
 {
 	players[id]->set_position(x, y);
 	players[id]->set_rotation(r);

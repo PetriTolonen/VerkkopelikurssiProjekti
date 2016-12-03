@@ -177,10 +177,10 @@ void ServerGame::ServerGameloop()
 			pos != ContactListener->_contacts.end(); ++pos) {
 			ContactCheck contact = *pos;
 
-			if ((contact.fixtureA->GetBody()->GetUserData() == "ammo" && contact.fixtureB->GetBody()->GetUserData() == "player") ||
-				(contact.fixtureA->GetBody()->GetUserData() == "player" && contact.fixtureB->GetBody()->GetUserData() == "ammo"))
+			if ((contact.fixtureA->GetBody()->GetUserData() == "ball" && contact.fixtureB->GetBody()->GetUserData() == "goal") ||
+				(contact.fixtureA->GetBody()->GetUserData() == "goal" && contact.fixtureB->GetBody()->GetUserData() == "ball"))
 			{
-				//player->reduce_health(1);
+				//scoreeeeeeeeeeeeeee
 			}
 		}
 		//--------------------------------------------------------------------------//

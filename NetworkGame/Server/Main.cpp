@@ -51,6 +51,7 @@ struct playerInfo
 {
 	ENetPeer *peer;
 	bool connectionAlive = false;
+	bool hasBEER = false;
 	int number;
 };
 
@@ -60,11 +61,13 @@ namespace
 	ENetHost * server;
 	char message[1024];
 	int playerCount = 0;
+	int nextPlayersNumber = 0;
 	std::vector<playerInfo*> players;
 	int receivePacketId;
 	mData* in;
 	float veloScale;
 	float kickForce;
+	int maxPlayers = 2;
 }
 
 void serverNetworkThread(ServerGame* game)
@@ -89,11 +92,13 @@ void serverNetworkThread(ServerGame* game)
 			/* Store any relevant client information here. */
 			event.peer->data = "Client information";
 
-			if (playerCount < 2)
+			if (playerCount < maxPlayers)
 			{
-				players[playerCount]->peer = event.peer;
-				players[playerCount]->number = playerCount;
+				players[nextPlayersNumber]->peer = event.peer;
+				players[nextPlayersNumber]->number = nextPlayersNumber;
+				players[nextPlayersNumber]->hasBEER = true;
 				playerCount++;
+				nextPlayersNumber++;
 			}
 
 			timeToCheckAlive.restart();
@@ -157,12 +162,15 @@ void serverNetworkThread(ServerGame* game)
 				}
 			case type_aData:
 			{
-				for (int i = 0; i < playerCount; i++)
+				for (int i = 0; i < maxPlayers; i++)
 				{
-					if (event.peer->address.port == players[i]->peer->address.port)
+					if (players[i]->hasBEER)
 					{
-						players[i]->connectionAlive = true;
-					}
+						if (event.peer->address.port == players[i]->peer->address.port)
+						{
+							players[i]->connectionAlive = true;
+						}
+					}					
 				}
 				break;
 			}
@@ -186,9 +194,9 @@ void serverNetworkThread(ServerGame* game)
 		if (playerCount > 0 && elapsed.asMilliseconds() > 10)
 		{
 			//---- Send to all players
-			for (int i = 0; i < playerCount; i++)
+			for (int i = 0; i < maxPlayers; i++)
 			{
-				for (int x = 0; x < 3; x++)
+				for (int x = 0; x < maxPlayers + 1; x++) // Ball is handled same as players
 				{
 					pData send;
 					send.x = game->getPlayer(x)->getPos().x;
@@ -196,24 +204,32 @@ void serverNetworkThread(ServerGame* game)
 					send.r = game->getPlayer(x)->getRot();
 					send.playerId = x;
 					ENetPacket *packet = enet_packet_create(&send, sizeof(pData), ENET_PACKET_FLAG_RELIABLE);
-					enet_peer_send(players[i]->peer, 0, packet);
+					if (players[i]->hasBEER)
+					{
+						enet_peer_send(players[i]->peer, 0, packet);
+					}					
 				}
 			}
 
 			//---- Remove non alive players
 			if (timeToCheckAlive.getElapsedTime().asSeconds() > 5)
 			{
-				for (int i = 0; i < playerCount; i++)
+				for (int i = 0; i < maxPlayers; i++)
 				{
-					if (players[i]->connectionAlive == false)
+					if (players[i]->hasBEER)
 					{
-						playerCount--;
-						printf("%08x players online.\n", playerCount);
-					}
-					else
-					{
-						players[i]->connectionAlive = false;
-					}
+						if (players[i]->connectionAlive == false)
+						{
+							players[i]->hasBEER = false;
+							nextPlayersNumber = players[i]->number; // Next player replaces disconnected
+							playerCount--;
+							printf("%08x players online.\n", playerCount);
+						}
+						else
+						{
+							players[i]->connectionAlive = false;
+						}
+					}					
 				}
 
 				timeToCheckAlive.restart();
@@ -247,7 +263,7 @@ int main()
 	/* Bind the server to port . */
 	address.port = PORT;
 	server = enet_host_create(&address /* the address to bind the server host to */,
-		32      /* allow up to 32 clients and/or outgoing connections */,
+		maxPlayers      /* allow up to 32 clients and/or outgoing connections */,
 		2      /* allow up to 2 channels to be used, 0 and 1 */,
 		0      /* assume any amount of incoming bandwidth */,
 		0      /* assume any amount of outgoing bandwidth */);
