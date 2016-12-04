@@ -7,6 +7,7 @@ Player::Player(std::string playerTextureName, float posX, float posY, float spee
 	this->speed = speed;
 	this->worldScale = worldScale;
 	set_texture(playerTextureName);
+	score = 0;
 }
 
 Player::~Player(void)

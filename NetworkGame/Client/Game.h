@@ -24,6 +24,7 @@ public:
 	void networkUpdate(int id, float x, float y, float r);
 	bool getRunning() { return running; };
 	Player* getPlayer(int id) { return players[id]; };
+	void setScore(int id, int score);
 
 private:
 	static const int screen_widht = 1280;
@@ -54,7 +55,6 @@ private:
 	static game_state _game_state;
 
 	int time_passed_after_death;
-	int score;
 
 	int level_move_count;
 	int modulo_int;

@@ -21,7 +21,8 @@ enum PacketTypes
 {
 	type_mData = 1,
 	type_pData = 2,
-	type_aData = 3
+	type_aData = 3,
+	type_sData = 4
 };
 
 struct mData
@@ -46,6 +47,13 @@ struct aData
 	int connectionAlive = 0;
 };
 
+struct sData
+{
+	int id = type_sData;
+	int score = 0;
+	int playerId = 0;
+};
+
 namespace
 {
 	int posX;
@@ -58,12 +66,13 @@ namespace
 	int eventStatus;
 	int receivePacketId;
 	pData* in;
-
+	sData* inS;
 }
 
 void netWorkThread(Game *game)
 {
 	in = new pData();
+	inS = new sData();
 	posX = 0.0f;
 
 	sf::Clock aliveSendTime;
@@ -71,9 +80,10 @@ void netWorkThread(Game *game)
 
 	aliveSendTime.restart();
 
-	/* Wait up to 1000 milliseconds for an event. */
-	while (enet_host_service(client, &event, 1) > 0 || true)
+	/* Wait up to x milliseconds for an event. */
+	while (enet_host_service(client, &event, 16.7) > 0 || true)
 	{
+		sf::Time elapsed = time.getElapsedTime();
 		switch (event.type)
 		{
 		case ENET_EVENT_TYPE_CONNECT:
@@ -108,6 +118,12 @@ void netWorkThread(Game *game)
 					std::cout << "Wrong packet received" << std::endl;
 					break;
 				}
+				case type_sData:
+				{
+					std::memcpy(inS, &*event.packet->data, sizeof(sData));
+
+					game->setScore(inS->playerId, inS->score);
+				}
 				default:
 					break;
 				}
@@ -127,7 +143,7 @@ void netWorkThread(Game *game)
 		}
 
 		// Network move
-		if (game && game->getRunning())
+		if (game && game->getRunning() && elapsed.asMilliseconds() > 16.7)
 		{
 			mData send;
 			if (game->getPlayer(0)->getMoves()) {
@@ -148,6 +164,8 @@ void netWorkThread(Game *game)
 			aliveSendTime.restart();
 		}
 	}
+
+	atexit(enet_deinitialize);
 }
 
 int main()
@@ -160,8 +178,6 @@ int main()
 		fprintf(stderr, "An error occured while initializing ENet.\n");
 		return EXIT_FAILURE;
 	}
-
-	atexit(enet_deinitialize);
 
 	// b. Create a host using enet_host_create
 	client = enet_host_create(NULL, 1, 2, 57600 / 8, 14400 / 8);

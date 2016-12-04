@@ -22,7 +22,8 @@ enum PacketTypes
 {
 	type_mData = 1,
 	type_pData = 2,
-	type_aData = 3
+	type_aData = 3,
+	type_sData = 4
 };
 
 struct mData
@@ -45,6 +46,13 @@ struct aData
 {
 	int id = type_aData;
 	int connectionAlive = 0;
+};
+
+struct sData
+{
+	int id = type_sData;
+	int score = 0;
+	int playerId = 0;
 };
 
 struct playerInfo
@@ -77,11 +85,13 @@ void serverNetworkThread(ServerGame* game)
 
 	sf::Clock timeToCheckAlive;
 	sf::Clock time;
-
-	/* Wait up to 1000 milliseconds for an event. */
-	while (enet_host_service(server, &event, 1) > 0 || true)
+	sf::Clock scoreTime;
+	scoreTime.restart();
+	/* Wait up to x milliseconds for an event. */
+	while (enet_host_service(server, &event, 1000) > 0 || true)
 	{
 		sf::Time elapsed = time.getElapsedTime();
+
 		//---- Handle events
 		switch (event.type)
 		{
@@ -170,7 +180,7 @@ void serverNetworkThread(ServerGame* game)
 						{
 							players[i]->connectionAlive = true;
 						}
-					}					
+					}
 				}
 				break;
 			}
@@ -190,8 +200,8 @@ void serverNetworkThread(ServerGame* game)
 			event.peer->data = NULL;
 		}
 
-		//---- Send player position packets to client
-		if (playerCount > 0 && elapsed.asMilliseconds() > 10)
+		//---- Send packets to client
+		if (playerCount > 0 && elapsed.asMilliseconds() > 15)
 		{
 			//---- Send to all players
 			for (int i = 0; i < maxPlayers; i++)
@@ -207,9 +217,28 @@ void serverNetworkThread(ServerGame* game)
 					if (players[i]->hasBEER)
 					{
 						enet_peer_send(players[i]->peer, 0, packet);
-					}					
+					}
 				}
 			}
+
+			if (scoreTime.getElapsedTime().asSeconds() > 1)
+			{
+				//---- Send score TODO:own timer or event...
+				for (int i = 0; i < maxPlayers; i++)
+				{
+					for (int x = 0; x < maxPlayers; x++)
+					{
+						sData send;
+						send.score = game->getPlayer(x)->getScore();
+						send.playerId = x;
+						ENetPacket *packet = enet_packet_create(&send, sizeof(sData), ENET_PACKET_FLAG_RELIABLE);
+						if (players[i]->hasBEER)
+						{
+							enet_peer_send(players[i]->peer, 0, packet);
+						}
+					}
+				}
+			}			
 
 			//---- Remove non alive players
 			if (timeToCheckAlive.getElapsedTime().asSeconds() > 5)
@@ -229,7 +258,7 @@ void serverNetworkThread(ServerGame* game)
 						{
 							players[i]->connectionAlive = false;
 						}
-					}					
+					}
 				}
 
 				timeToCheckAlive.restart();

@@ -3,6 +3,7 @@
 Player::Player(b2Body* player_body)
 {
 	this->playerBody = player_body;
+	score = 0;
 }
 
 void Player::update()

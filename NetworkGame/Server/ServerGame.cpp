@@ -72,7 +72,7 @@ void ServerGame::init()
 	WallFixtureDef2.shape = &WallShape2;
 	WallFixtureDef2.restitution = 1.f;
 	WallFixtureDef2.friction = 1.f;
-	wallupper_body2->SetUserData("wall");
+	wallupper_body2->SetUserData("goal");
 	wallupper_body2->CreateFixture(&WallFixtureDef2);
 	wallupper_body2->SetTransform(b2Vec2(x / SCALE, y / SCALE), 0);
 
@@ -92,7 +92,7 @@ void ServerGame::init()
 	WallFixtureDef3.shape = &WallShape3;
 	WallFixtureDef3.restitution = 1.f;
 	WallFixtureDef3.friction = 1.f;
-	wallupper_body3->SetUserData("wall");
+	wallupper_body3->SetUserData("goal");
 	wallupper_body3->CreateFixture(&WallFixtureDef3);
 	wallupper_body3->SetTransform(b2Vec2(x / SCALE, y / SCALE), 0);
 	//-----------------------------------------
@@ -144,8 +144,8 @@ void ServerGame::init()
 	ball_body->SetUserData("ball");
 	ball_body->CreateFixture(&FixtureDefCircle);
 	ball_body->SetTransform(b2Vec2(640 / SCALE, 360 / SCALE), 0);
-	ball_body->SetLinearDamping(0.01);
-	ball_body->SetAngularDamping(0.01);
+	ball_body->SetLinearDamping(0.005);
+	ball_body->SetAngularDamping(0.005);
 	//-----------------------------------------
 
 	player = new Player(player_body);
@@ -155,6 +155,14 @@ void ServerGame::init()
 	players.push_back(player1);
 	players.push_back(ball);
 	ServerGameloop();
+}
+
+void ServerGame::resetGame()
+{
+	players[0]->getBody()->SetTransform(b2Vec2(128 / SCALE, 360 / SCALE), 0);
+	players[1]->getBody()->SetTransform(b2Vec2(1152 / SCALE, 360 / SCALE), 0);
+	players[2]->getBody()->SetTransform(b2Vec2(640 / SCALE, 360 / SCALE), 0);
+	players[2]->getBody()->SetLinearVelocity(b2Vec2(0, 0));
 }
 
 //-----ServerGame_loop-----//
@@ -180,7 +188,16 @@ void ServerGame::ServerGameloop()
 			if ((contact.fixtureA->GetBody()->GetUserData() == "ball" && contact.fixtureB->GetBody()->GetUserData() == "goal") ||
 				(contact.fixtureA->GetBody()->GetUserData() == "goal" && contact.fixtureB->GetBody()->GetUserData() == "ball"))
 			{
-				//scoreeeeeeeeeeeeeee
+				if (players[2]->getPos().x > 3) // ball x pos
+				{
+					players[0]->scoreUp();
+					resetGame();
+				}
+				else
+				{
+					players[1]->scoreUp();
+					resetGame();
+				}
 			}
 		}
 		//--------------------------------------------------------------------------//

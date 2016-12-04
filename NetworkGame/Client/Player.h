@@ -28,6 +28,9 @@ public:
 	void zeroNetworkMove();
 	bool getMoves() { return moves; }
 
+	void setScore(int s) { score = s; }
+	int getScore() { return score; }
+
 private:
 	float posX;
 	float posY;
@@ -38,6 +41,8 @@ private:
 	sf::Vector2i networkMove;
 	int networkRot;
 	bool moves = false;
+
+	int score;
 };
 
 #endif;

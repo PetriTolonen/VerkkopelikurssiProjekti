@@ -29,8 +29,6 @@ void Game::run()
 	//---after_death_timer---//
 	time_passed_after_death = 60 * 10;
 
-	score = 0;
-
 	//----Scale
 	SCALE = 40.f;
 
@@ -160,7 +158,7 @@ void Game::gameloop(sf::RenderWindow *window, sf::View *view, MainMenu *main_men
 			{
 				// Create a text
 				std::ostringstream re_text;
-				re_text << "Score " << score;
+				re_text << "Score " << players[0]->getScore() << " - " << players[1]->getScore();
 
 				sf::Text text;
 				text.setFont(font);
@@ -175,7 +173,7 @@ void Game::gameloop(sf::RenderWindow *window, sf::View *view, MainMenu *main_men
 				text.setOrigin(textRect.left + textRect.width / 2.0f,
 					textRect.top + textRect.height / 2.0f);
 
-				text.setPosition(sf::Vector2f(screen_widht*0.2, (screen_height)*0.1));
+				text.setPosition(sf::Vector2f(screen_widht / 2.0f, (screen_height)*0.1));
 				window->draw(text);
 			}
 
@@ -275,6 +273,11 @@ void Game::networkUpdate(int id, float x, float y, float r)
 {
 	players[id]->set_position(x, y);
 	players[id]->set_rotation(r);
+}
+
+void Game::setScore(int id, int score)
+{
+	players[id]->setScore(score);
 }
 
 void Game::show_splash_screen(sf::RenderWindow *window)

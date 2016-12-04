@@ -21,6 +21,8 @@ public:
 	Player* getPlayer(int id) { return players[id]; };
 	float getScale() { return SCALE; };
 
+	void resetGame();
+
 private:
 	static const int screen_widht = 1280;
 	static const int screen_height = 720;

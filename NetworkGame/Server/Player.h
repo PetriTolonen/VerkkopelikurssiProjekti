@@ -17,9 +17,15 @@ public:
 
 	b2Body* getBody();
 
+	int getScore() { return score; };
+	void scoreUp() { score++; };
+	void zeroScore() { score = 0; };
+
 private:
 	b2Body* playerBody;
 	float M_PI = 3.14159265358979323846;
 	float turretDir;
 	b2Vec2 pos;
+
+	int score;
 };
