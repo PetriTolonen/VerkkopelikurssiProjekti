@@ -85,13 +85,13 @@ void serverNetworkThread(ServerGame* game)
 
 	sf::Clock timeToCheckAlive;
 	sf::Clock time;
+	time.restart();
 	sf::Clock scoreTime;
 	scoreTime.restart();
+	
 	/* Wait up to x milliseconds for an event. */
-	while (enet_host_service(server, &event, 1000) > 0 || true)
+	while (enet_host_service(server, &event, 0) > 0 || true)
 	{
-		sf::Time elapsed = time.getElapsedTime();
-
 		//---- Handle events
 		switch (event.type)
 		{
@@ -156,8 +156,8 @@ void serverNetworkThread(ServerGame* game)
 						intY = -1;
 					}
 
-					veloScale = 0.25;
-					kickForce = 0.002;
+					veloScale = 2.5;
+					kickForce = 0.02;
 
 					if (event.peer->address.port == players[0]->peer->address.port)
 					{
@@ -201,7 +201,7 @@ void serverNetworkThread(ServerGame* game)
 		}
 
 		//---- Send packets to client
-		if (playerCount > 0 && elapsed.asMilliseconds() > 15)
+		if (playerCount > 0 && time.getElapsedTime().asSeconds() >= 1.0f / 60.0f)
 		{
 			//---- Send to all players
 			for (int i = 0; i < maxPlayers; i++)
@@ -223,7 +223,7 @@ void serverNetworkThread(ServerGame* game)
 
 			if (scoreTime.getElapsedTime().asSeconds() > 1)
 			{
-				//---- Send score TODO:own timer or event...
+				//---- Send score
 				for (int i = 0; i < maxPlayers; i++)
 				{
 					for (int x = 0; x < maxPlayers; x++)
@@ -263,6 +263,13 @@ void serverNetworkThread(ServerGame* game)
 
 				timeToCheckAlive.restart();
 			}
+
+			time.restart();
+		}
+		else
+		{
+			sf::Time sleepTime = sf::seconds((1.0f / 60.0f) - time.getElapsedTime().asSeconds());
+			sf::sleep(sleepTime);
 		}
 	}
 

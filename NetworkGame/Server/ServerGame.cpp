@@ -2,7 +2,7 @@
 
 #include <sstream>
 
-ServerGame::ServerGame() :myWorld(b2Vec2(0.0f, 0.0f))
+ServerGame::ServerGame() :myWorld(b2Vec2(0.0f, 10.0f))
 {
 }
 
@@ -30,7 +30,7 @@ void ServerGame::init()
 	WallShape.SetAsBox((w / 2) / SCALE, (h / 2) / SCALE);
 	b2FixtureDef WallFixtureDef;
 	WallFixtureDef.shape = &WallShape;
-	WallFixtureDef.restitution = 1.f;
+	WallFixtureDef.restitution = 0.f;
 	WallFixtureDef.friction = 1.f;
 	wallupper_body->SetUserData("wall");
 	wallupper_body->CreateFixture(&WallFixtureDef);
@@ -50,7 +50,7 @@ void ServerGame::init()
 	WallShape1.SetAsBox((w / 2) / SCALE, (h / 2) / SCALE);
 	b2FixtureDef WallFixtureDef1;
 	WallFixtureDef1.shape = &WallShape1;
-	WallFixtureDef1.restitution = 1.f;
+	WallFixtureDef1.restitution = 0.f;;
 	WallFixtureDef1.friction = 1.f;
 	wallupper_body1->SetUserData("wall");
 	wallupper_body1->CreateFixture(&WallFixtureDef1);
@@ -70,7 +70,7 @@ void ServerGame::init()
 	WallShape2.SetAsBox((w / 2) / SCALE, (h / 2) / SCALE);
 	b2FixtureDef WallFixtureDef2;
 	WallFixtureDef2.shape = &WallShape2;
-	WallFixtureDef2.restitution = 1.f;
+	WallFixtureDef2.restitution = 0.f;;
 	WallFixtureDef2.friction = 1.f;
 	wallupper_body2->SetUserData("goal");
 	wallupper_body2->CreateFixture(&WallFixtureDef2);
@@ -90,7 +90,7 @@ void ServerGame::init()
 	WallShape3.SetAsBox((w / 2) / SCALE, (h / 2) / SCALE);
 	b2FixtureDef WallFixtureDef3;
 	WallFixtureDef3.shape = &WallShape3;
-	WallFixtureDef3.restitution = 1.f;
+	WallFixtureDef3.restitution = 0.f;;
 	WallFixtureDef3.friction = 1.f;
 	wallupper_body3->SetUserData("goal");
 	wallupper_body3->CreateFixture(&WallFixtureDef3);
@@ -107,15 +107,15 @@ void ServerGame::init()
 	Shape.SetAsBox((20.f) / SCALE, (20.f) / SCALE);
 	b2FixtureDef FixtureDef;
 	FixtureDef.density = 10.f;
-	FixtureDef.friction = 1.0f;
-	FixtureDef.restitution = 0.8f;
+	FixtureDef.friction = 0.2f;
+	FixtureDef.restitution = 0.0f;
 	FixtureDef.shape = &Shape;
 	player_body->SetUserData("player");
 	player_body->CreateFixture(&FixtureDef);
 	player_body->SetTransform(b2Vec2(128 / SCALE, 360 / SCALE), 0);
 	// movement dampening
-	player_body->SetLinearDamping(0.1);
-	player_body->SetAngularDamping(0.1);
+	player_body->SetLinearDamping(1.0);
+	//player_body->SetAngularDamping(0.1);
 	//-----------------------------------------
 
 	//---player_b2_body---//
@@ -125,8 +125,8 @@ void ServerGame::init()
 	player_body1->CreateFixture(&FixtureDef);
 	player_body1->SetTransform(b2Vec2(1152 / SCALE, 360 / SCALE), 0);
 	// movement dampening
-	player_body1->SetLinearDamping(0.1);
-	player_body1->SetAngularDamping(0.1);
+	player_body1->SetLinearDamping(2.0);
+	//player_body1->SetAngularDamping(0.1);
 	//-----------------------------------------
 
 	//---ball_b2_body---//	
@@ -138,13 +138,13 @@ void ServerGame::init()
 	circleShape.m_radius = 20.f / SCALE;
 	b2FixtureDef FixtureDefCircle;
 	FixtureDefCircle.density = 0.1f;
-	FixtureDefCircle.friction = 1.f;
-	FixtureDefCircle.restitution = 1.f;
+	FixtureDefCircle.friction = 0.2f;
+	FixtureDefCircle.restitution = 0.5f;
 	FixtureDefCircle.shape = &circleShape;
 	ball_body->SetUserData("ball");
 	ball_body->CreateFixture(&FixtureDefCircle);
 	ball_body->SetTransform(b2Vec2(640 / SCALE, 360 / SCALE), 0);
-	ball_body->SetLinearDamping(0.005);
+	//ball_body->SetLinearDamping(0.0);
 	ball_body->SetAngularDamping(0.005);
 	//-----------------------------------------
 
@@ -168,54 +168,67 @@ void ServerGame::resetGame()
 //-----ServerGame_loop-----//
 void ServerGame::ServerGameloop()
 {
+	gameTime.restart();
+
 	while (true)
 	{
 		running = true;
 
-		myWorld.Step(1.0f / 60.0f, 8, 4);
-
-		for (size_t i = 0; i < players.size(); i++)
+		if (gameTime.getElapsedTime().asSeconds() >= 1.0f / 60.0f)
 		{
-			players[i]->update();
-		}
+			myWorld.Step(1.0f / 60.0f, 8, 4);
 
-		//-------------------check contacts------------------------------------//
-		std::vector<ContactCheck>::iterator pos;
-		for (pos = ContactListener->_contacts.begin();
-			pos != ContactListener->_contacts.end(); ++pos) {
-			ContactCheck contact = *pos;
-
-			if ((contact.fixtureA->GetBody()->GetUserData() == "ball" && contact.fixtureB->GetBody()->GetUserData() == "goal") ||
-				(contact.fixtureA->GetBody()->GetUserData() == "goal" && contact.fixtureB->GetBody()->GetUserData() == "ball"))
+			for (size_t i = 0; i < players.size(); i++)
 			{
-				if (players[2]->getPos().x > 3) // ball x pos
+				players[i]->getBody()->ApplyForceToCenter(players[i]->getBody()->GetMass() * -myWorld.GetGravity(), true);
+				players[i]->update();
+			}
+
+			//-------------------check contacts------------------------------------//
+			std::vector<ContactCheck>::iterator pos;
+			for (pos = ContactListener->_contacts.begin();
+				pos != ContactListener->_contacts.end(); ++pos) {
+				ContactCheck contact = *pos;
+
+				if ((contact.fixtureA->GetBody()->GetUserData() == "ball" && contact.fixtureB->GetBody()->GetUserData() == "goal") ||
+					(contact.fixtureA->GetBody()->GetUserData() == "goal" && contact.fixtureB->GetBody()->GetUserData() == "ball"))
 				{
-					players[0]->scoreUp();
-					resetGame();
-				}
-				else
-				{
-					players[1]->scoreUp();
-					resetGame();
+					if (players[2]->getPos().x > 3) // ball x pos
+					{
+						players[0]->scoreUp();
+						resetGame();
+					}
+					else
+					{
+						players[1]->scoreUp();
+						resetGame();
+					}
 				}
 			}
-		}
-		//--------------------------------------------------------------------------//
+			//--------------------------------------------------------------------------//
 
-		//-----------------------Go through ammo and delete-----------------------------------------------//
-		/*std::vector<Ammo*>::iterator it = ammo_vector.begin();
-		while (it != ammo_vector.end())
-		{
-		if ((*it)->get_timer() <= 0)
-		{
-		myWorld.DestroyBody((*it)->get_ammo_body());
-		it = ammo_vector.erase(it);
-		}
-		else
-		it++;
-		}*/
+			//-----------------------Go through ammo and delete-----------------------------------------------//
+			/*std::vector<Ammo*>::iterator it = ammo_vector.begin();
+			while (it != ammo_vector.end())
+			{
+			if ((*it)->get_timer() <= 0)
+			{
+			myWorld.DestroyBody((*it)->get_ammo_body());
+			it = ammo_vector.erase(it);
+			}
+			else
+			it++;
+			}*/
 
-		//-----------------------------------------------------------------------//
+			//-----------------------------------------------------------------------//
+
+			gameTime.restart();
+		}
+		else //Sleep until next 1/60th of a second comes around
+		{
+			sf::Time sleepTime = sf::seconds((1.0f / 60.0f) - gameTime.getElapsedTime().asSeconds());
+			sf::sleep(sleepTime);
+		}
 	}
 	
 	delete ContactListener;

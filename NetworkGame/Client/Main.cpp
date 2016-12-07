@@ -77,13 +77,13 @@ void netWorkThread(Game *game)
 
 	sf::Clock aliveSendTime;
 	sf::Clock time;
+	time.restart();
 
 	aliveSendTime.restart();
 
 	/* Wait up to x milliseconds for an event. */
-	while (enet_host_service(client, &event, 16.7) > 0 || true)
-	{
-		sf::Time elapsed = time.getElapsedTime();
+	while (enet_host_service(client, &event, 0) > 0 || true)
+	{		
 		switch (event.type)
 		{
 		case ENET_EVENT_TYPE_CONNECT:
@@ -142,18 +142,6 @@ void netWorkThread(Game *game)
 			break;
 		}
 
-		// Network move
-		if (game && game->getRunning() && elapsed.asMilliseconds() > 16.7)
-		{
-			mData send;
-			if (game->getPlayer(0)->getMoves()) {
-				send.rot = game->getPlayer(0)->getNetworkRotate();
-				send.dir = game->getPlayer(0)->getNetworkMove();
-				ENetPacket *packet = enet_packet_create(&send, sizeof(mData), ENET_PACKET_FLAG_RELIABLE);
-				enet_peer_send(peer, 0, packet);
-			}
-		}
-
 		// Im alive
 		if (aliveSendTime.getElapsedTime().asSeconds() > 2)
 		{
@@ -162,6 +150,25 @@ void netWorkThread(Game *game)
 			ENetPacket *packet = enet_packet_create(&send, sizeof(aData), ENET_PACKET_FLAG_RELIABLE);
 			enet_peer_send(peer, 0, packet);
 			aliveSendTime.restart();
+		}
+
+		// Network move
+		if (game && game->getRunning() && time.getElapsedTime().asSeconds() >= 1.0f / 60.0f)
+		{
+			mData send;
+			if (game->getPlayer(0)->getMoves()) {
+				send.rot = game->getPlayer(0)->getNetworkRotate();
+				send.dir = game->getPlayer(0)->getNetworkMove();
+				ENetPacket *packet = enet_packet_create(&send, sizeof(mData), ENET_PACKET_FLAG_RELIABLE);
+				enet_peer_send(peer, 0, packet);
+			}
+
+			time.restart();
+		}
+		else
+		{
+			sf::Time sleepTime = sf::seconds((1.0f / 60.0f) - time.getElapsedTime().asSeconds());
+			sf::sleep(sleepTime);
 		}
 	}
 

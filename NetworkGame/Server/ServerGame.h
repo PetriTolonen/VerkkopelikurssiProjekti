@@ -10,6 +10,9 @@
 #include "Box2D\Box2D.h"
 #include "ContactChecker.h"
 
+#include "SFML\System\Clock.hpp"
+#include "SFML\System\Sleep.hpp"
+
 class ServerGame
 {
 public:
@@ -49,4 +52,6 @@ private:
 
 	float SCALE;
 	bool running = false;
+
+	sf::Clock gameTime;
 };

@@ -23,7 +23,7 @@ float Player::getRot()
 
 void Player::handleBodyKick(float force, b2Body* ball)
 {
-	b2Vec2 dir = ball->GetPosition() - playerBody->GetPosition();
+	b2Vec2 dir = ball->GetWorldCenter() - playerBody->GetWorldCenter();
 	float lenght = dir.Length();
 
 	dir.Normalize();
