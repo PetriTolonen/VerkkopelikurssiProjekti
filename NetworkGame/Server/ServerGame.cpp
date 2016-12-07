@@ -59,7 +59,7 @@ void ServerGame::init()
 	//createWall(myWorld, 32, 720, 16, 360, SCALE);
 	w = 32;
 	h = 720;
-	x = 16;
+	x = 14;
 	y = 360;
 	b2BodyDef BodyDefWall2;
 	BodyDefWall2.type = b2_staticBody;
@@ -72,14 +72,14 @@ void ServerGame::init()
 	WallFixtureDef2.shape = &WallShape2;
 	WallFixtureDef2.restitution = 0.f;;
 	WallFixtureDef2.friction = 1.f;
-	wallupper_body2->SetUserData("goal");
+	wallupper_body2->SetUserData("wall");
 	wallupper_body2->CreateFixture(&WallFixtureDef2);
 	wallupper_body2->SetTransform(b2Vec2(x / SCALE, y / SCALE), 0);
 
 	//createWall(myWorld, 32, 720, 1264, 360, SCALE);
 	w = 32;
 	h = 720;
-	x = 1264;
+	x = 1266;
 	y = 360;
 	b2BodyDef BodyDefWall3;
 	BodyDefWall3.type = b2_staticBody;
@@ -92,11 +92,53 @@ void ServerGame::init()
 	WallFixtureDef3.shape = &WallShape3;
 	WallFixtureDef3.restitution = 0.f;;
 	WallFixtureDef3.friction = 1.f;
-	wallupper_body3->SetUserData("goal");
+	wallupper_body3->SetUserData("wall");
 	wallupper_body3->CreateFixture(&WallFixtureDef3);
 	wallupper_body3->SetTransform(b2Vec2(x / SCALE, y / SCALE), 0);
 	//-----------------------------------------
 
+	//createWall(myWorld, 32, 720, 16, 360, SCALE);
+	w = 32;
+	h = 256;
+	x = 20;
+	y = 360;
+	b2BodyDef BodyDefGoal;
+	BodyDefGoal.type = b2_staticBody;
+	b2PolygonShape goalShape;
+
+	b2Body* Goalupper_body = myWorld.CreateBody(&BodyDefGoal);
+
+	goalShape.SetAsBox((w / 2) / SCALE, (h / 2) / SCALE);
+	b2FixtureDef GoalFixtureDef;
+	GoalFixtureDef.shape = &goalShape;
+	GoalFixtureDef.restitution = 0.f;;
+	GoalFixtureDef.friction = 1.f;
+	Goalupper_body->SetUserData("goal");
+	Goalupper_body->CreateFixture(&GoalFixtureDef);
+	Goalupper_body->SetTransform(b2Vec2(x / SCALE, y / SCALE), 0);
+
+	//createWall(myWorld, 32, 720, 1264, 360, SCALE);
+	w = 32;
+	h = 256;
+	x = 1260;
+	y = 360;
+	b2BodyDef BodyDefGoal1;
+	BodyDefGoal1.type = b2_staticBody;
+	b2PolygonShape goalShape1;
+
+	b2Body* Goalupper_body1 = myWorld.CreateBody(&BodyDefGoal1);
+
+	goalShape1.SetAsBox((w / 2) / SCALE, (h / 2) / SCALE);
+	b2FixtureDef GoalFixtureDef1;
+	GoalFixtureDef1.shape = &goalShape1;
+	GoalFixtureDef1.restitution = 0.f;;
+	GoalFixtureDef1.friction = 1.f;
+	Goalupper_body1->SetUserData("goal");
+	Goalupper_body1->CreateFixture(&GoalFixtureDef1);
+	Goalupper_body1->SetTransform(b2Vec2(x / SCALE, y / SCALE), 0);
+	//-----------------------------------------
+
+	float playerDamping = 10.0f;
 	//---player_b2_body---//	
 	b2BodyDef BodyDef;
 	BodyDef.type = b2_dynamicBody;
@@ -104,7 +146,7 @@ void ServerGame::init()
 	b2Body* player_body = myWorld.CreateBody(&BodyDef);
 
 	b2PolygonShape Shape;
-	Shape.SetAsBox((20.f) / SCALE, (20.f) / SCALE);
+	Shape.SetAsBox((20.f) / SCALE, (40.f) / SCALE);
 	b2FixtureDef FixtureDef;
 	FixtureDef.density = 10.f;
 	FixtureDef.friction = 0.2f;
@@ -114,7 +156,7 @@ void ServerGame::init()
 	player_body->CreateFixture(&FixtureDef);
 	player_body->SetTransform(b2Vec2(128 / SCALE, 360 / SCALE), 0);
 	// movement dampening
-	player_body->SetLinearDamping(1.0);
+	player_body->SetLinearDamping(playerDamping);
 	//player_body->SetAngularDamping(0.1);
 	//-----------------------------------------
 
@@ -125,7 +167,7 @@ void ServerGame::init()
 	player_body1->CreateFixture(&FixtureDef);
 	player_body1->SetTransform(b2Vec2(1152 / SCALE, 360 / SCALE), 0);
 	// movement dampening
-	player_body1->SetLinearDamping(2.0);
+	player_body1->SetLinearDamping(playerDamping);
 	//player_body1->SetAngularDamping(0.1);
 	//-----------------------------------------
 
@@ -138,7 +180,7 @@ void ServerGame::init()
 	circleShape.m_radius = 20.f / SCALE;
 	b2FixtureDef FixtureDefCircle;
 	FixtureDefCircle.density = 0.1f;
-	FixtureDefCircle.friction = 0.2f;
+	FixtureDefCircle.friction = 0.0f;
 	FixtureDefCircle.restitution = 0.5f;
 	FixtureDefCircle.shape = &circleShape;
 	ball_body->SetUserData("ball");
@@ -160,7 +202,9 @@ void ServerGame::init()
 void ServerGame::resetGame()
 {
 	players[0]->getBody()->SetTransform(b2Vec2(128 / SCALE, 360 / SCALE), 0);
+	players[0]->getBody()->SetLinearVelocity(b2Vec2(0, 0));
 	players[1]->getBody()->SetTransform(b2Vec2(1152 / SCALE, 360 / SCALE), 0);
+	players[1]->getBody()->SetLinearVelocity(b2Vec2(0, 0));
 	players[2]->getBody()->SetTransform(b2Vec2(640 / SCALE, 360 / SCALE), 0);
 	players[2]->getBody()->SetLinearVelocity(b2Vec2(0, 0));
 }

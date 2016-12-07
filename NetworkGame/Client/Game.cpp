@@ -32,8 +32,8 @@ void Game::run()
 	//----Scale
 	SCALE = 40.f;
 
-	player = new Player("box.png", 50, 500, 0.1f, SCALE);
-	player1 = new Player("box.png", 50, 500, 0.1f, SCALE);
+	player = new Player("rectancle.png", 50, 500, 0.1f, SCALE);
+	player1 = new Player("rectancle.png", 50, 500, 0.1f, SCALE);
 	ball = new Player("ball.png", 0, 0, 0.1f, SCALE);
 	players.push_back(player);
 	players.push_back(player1);
@@ -225,6 +225,12 @@ void Game::gameloop(sf::RenderWindow *window, sf::View *view, MainMenu *main_men
 			}
 		}
 	}
+	
+	for (size_t i = 0; i < players.size(); i++)
+	{
+		players[i]->destroy();
+	}
+
 	window->close();
 }
 
