@@ -97,7 +97,7 @@ void ServerGame::init()
 	wallupper_body3->SetTransform(b2Vec2(x / SCALE, y / SCALE), 0);
 	//-----------------------------------------
 
-	//createWall(myWorld, 32, 720, 16, 360, SCALE);
+	//createWall(myWorld, 32, 256, 20, 360, SCALE);
 	w = 32;
 	h = 256;
 	x = 20;
@@ -117,7 +117,30 @@ void ServerGame::init()
 	Goalupper_body->CreateFixture(&GoalFixtureDef);
 	Goalupper_body->SetTransform(b2Vec2(x / SCALE, y / SCALE), 0);
 
-	//createWall(myWorld, 32, 720, 1264, 360, SCALE);
+	//----Tolpat
+	float r = 10.0f;
+	b2BodyDef BodyDefGoalTolppa;
+	BodyDefGoalTolppa.type = b2_staticBody;
+	b2CircleShape goalTolppa1Shape;
+
+	b2Body* GoalTolppa1_body = myWorld.CreateBody(&BodyDefGoalTolppa);
+
+	goalTolppa1Shape.m_radius = r / SCALE;
+	b2FixtureDef GoalTolppaFixtureDef;
+	GoalTolppaFixtureDef.shape = &goalTolppa1Shape;
+	GoalTolppaFixtureDef.restitution = 0.f;;
+	GoalTolppaFixtureDef.friction = 1.f;
+	GoalTolppa1_body->SetUserData("goalTolppa");
+	GoalTolppa1_body->CreateFixture(&GoalTolppaFixtureDef);
+	GoalTolppa1_body->SetTransform(b2Vec2((x + w / 2) / SCALE, (y + h / 2) / SCALE), 0);
+
+	//--
+	b2Body* GoalTolppa2_body = myWorld.CreateBody(&BodyDefGoalTolppa);
+	GoalTolppa2_body->SetUserData("goalTolppa");
+	GoalTolppa2_body->CreateFixture(&GoalTolppaFixtureDef);
+	GoalTolppa2_body->SetTransform(b2Vec2((x + w / 2) / SCALE, (y - h / 2) / SCALE), 0);
+
+	//createWall(myWorld, 32, 256, 1260, 360, SCALE);
 	w = 32;
 	h = 256;
 	x = 1260;
@@ -136,6 +159,19 @@ void ServerGame::init()
 	Goalupper_body1->SetUserData("goal");
 	Goalupper_body1->CreateFixture(&GoalFixtureDef1);
 	Goalupper_body1->SetTransform(b2Vec2(x / SCALE, y / SCALE), 0);
+
+	//---Tolpat
+	b2Body* GoalTolppa3_body = myWorld.CreateBody(&BodyDefGoalTolppa);
+	GoalTolppa3_body->SetUserData("goalTolppa");
+	GoalTolppa3_body->CreateFixture(&GoalTolppaFixtureDef);
+	GoalTolppa3_body->SetTransform(b2Vec2((x - w / 2) / SCALE, (y + h / 2) / SCALE), 0);
+	//--
+	b2Body* GoalTolppa4_body = myWorld.CreateBody(&BodyDefGoalTolppa);
+	GoalTolppa4_body->SetUserData("goalTolppa");
+	GoalTolppa4_body->CreateFixture(&GoalTolppaFixtureDef);
+	GoalTolppa4_body->SetTransform(b2Vec2((x - w / 2) / SCALE, (y - h / 2) / SCALE), 0);
+
+
 	//-----------------------------------------
 
 	float playerDamping = 10.0f;

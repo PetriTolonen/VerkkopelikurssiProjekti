@@ -103,6 +103,7 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="SplashScreen.cpp" />
     <ClCompile Include="TileMap.cpp" />
+    <ClCompile Include="Tolppa.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimatedSprite.h" />
@@ -118,6 +119,7 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="SplashScreen.h" />
     <ClInclude Include="TileMap.h" />
+    <ClInclude Include="Tolppa.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SFML_setup_30.1.rc" />

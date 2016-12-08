@@ -8,6 +8,8 @@ Player::Player(std::string playerTextureName, float posX, float posY, float spee
 	this->worldScale = worldScale;
 	set_texture(playerTextureName);
 	score = 0;
+
+	get_sprite().setPosition(posX, posY);
 }
 
 Player::~Player(void)

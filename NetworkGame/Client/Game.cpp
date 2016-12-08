@@ -42,62 +42,32 @@ void Game::run()
 	o_manager.add_object(player1);
 	o_manager.add_object(ball);
 
-	//----Hit_Explosion_Animation----//
-	sf::Texture animtexture;
-	animtexture.loadFromFile("hit_explosion_animation.png");
+	//----Goal tolpat
+	float w = 32;
+	float h = 256;
+	float x = 20;
+	float y = 360;
 
-	Animation explosion;
-	explosion.setSpriteSheet(animtexture);
+	Tolppa* tolppa1 = new Tolppa("tolppa.png", (x + w / 2), (y + h / 2), SCALE);
+	Tolppa* tolppa2 = new Tolppa("tolppa.png", (x + w / 2), (y - h / 2), SCALE);
 
-	for (int i = 0; i <= 12; i++)
-	{
-		explosion.addFrame(sf::IntRect(i * 256, 0, 256, 256));
-	}
+	w = 32;
+	h = 256;
+	x = 1260;
+	y = 360;
 
-	currentAnimation = &explosion;
+	Tolppa* tolppa3 = new Tolppa("tolppa.png", (x - w / 2), (y + h / 2), SCALE);;
+	Tolppa* tolppa4 = new Tolppa("tolppa.png", (x - w / 2), (y - h / 2), SCALE);;
 
-	animatedSprite.setFrameTime(sf::seconds(0.05f));
-	animatedSprite.pause();
-	animatedSprite.setLooped(false);
-	animatedSprite.setOrigin(128, 128);
-	//----Animation----//
+	tolpat.push_back(tolppa1);
+	tolpat.push_back(tolppa2);
+	tolpat.push_back(tolppa3);
+	tolpat.push_back(tolppa4);
 
-	//----Explosion_Animation----//
-	sf::Texture animtexture2;
-	animtexture2.loadFromFile("animation_cloud_explosion_512.png");
-
-	Animation explosion2;
-	explosion2.setSpriteSheet(animtexture2);
-
-	for (int i = 0; i <= 31; i++)
-	{
-		explosion2.addFrame(sf::IntRect(i * 512, 0, 512, 512));
-	}
-
-	currentAnimation2 = &explosion2;
-
-	animatedSprite2.setFrameTime(sf::seconds(0.03f));
-	animatedSprite2.pause();
-	animatedSprite2.setLooped(false);
-	//----Animation----//
-
-	//----Shooting_Animation----//
-	sf::Texture animtexture3;
-	animtexture3.loadFromFile("turret_shooting_animation.png");
-
-	Animation explosion3;
-	explosion3.setSpriteSheet(animtexture3);
-
-	for (int i = 0; i <= 35; i++)
-	{
-		explosion3.addFrame(sf::IntRect(i * 256, 0, 256, 256));
-	}
-
-	currentAnimation3 = &explosion3;
-	animatedSprite3.setFrameTime(sf::seconds(0.03f));
-	animatedSprite3.pause();
-	animatedSprite3.setLooped(false);
-	animatedSprite3.setOrigin(128, 128);
+	o_manager.add_object(tolppa1);
+	o_manager.add_object(tolppa2);
+	o_manager.add_object(tolppa3);
+	o_manager.add_object(tolppa4);
 
 	// Declare and load a font
 	font.loadFromFile("impact.ttf");
@@ -145,13 +115,6 @@ void Game::gameloop(sf::RenderWindow *window, sf::View *view, MainMenu *main_men
 			window->draw(map2);
 			o_manager.update(event, window, elapsed.asMilliseconds());
 			o_manager.draw(window);
-
-			////----Animations----//
-			//animatedSprite.update(elapsed);
-			//animatedSprite2.update(elapsed);
-			//window->draw(animatedSprite);
-			//window->draw(animatedSprite2);
-			////----Animations----//
 
 			//---Information_hud---//
 			if (player->get_health() > 0)
@@ -229,6 +192,11 @@ void Game::gameloop(sf::RenderWindow *window, sf::View *view, MainMenu *main_men
 	for (size_t i = 0; i < players.size(); i++)
 	{
 		players[i]->destroy();
+	}
+
+	for (size_t i = 0; i < tolpat.size(); i++)
+	{
+		tolpat[i]->destroy();
 	}
 
 	window->close();

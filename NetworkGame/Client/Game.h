@@ -11,6 +11,7 @@
 #include "MainMenu.h"
 #include "GameOver.h"
 #include "AnimatedSprite.h"
+#include "Tolppa.h"
 
 #include <iostream>
 
@@ -60,22 +61,18 @@ private:
 	int modulo_int;
 
 	//----Init
-	AnimatedSprite animatedSprite;
-	Animation* currentAnimation;
-	AnimatedSprite animatedSprite2;
-	Animation* currentAnimation2;
-	AnimatedSprite animatedSprite3;
-	Animation* currentAnimation3;
-
 	Player *player;
 	Player *player1;
 	Player *ball;
 	std::vector<Player*> players;
+	std::vector<Tolppa*> tolpat;
 	sf::Clock clock;
 	float SCALE;
 
 	bool running = false;
 
 	sf::Font font;
+
+	sf::Texture tolppaTexture;
 };
 #endif
