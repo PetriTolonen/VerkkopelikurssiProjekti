@@ -30,8 +30,8 @@ void ServerGame::init()
 	WallShape.SetAsBox((w / 2) / SCALE, (h / 2) / SCALE);
 	b2FixtureDef WallFixtureDef;
 	WallFixtureDef.shape = &WallShape;
-	WallFixtureDef.restitution = 0.f;
-	WallFixtureDef.friction = 1.f;
+	WallFixtureDef.restitution = 0.2f;
+	WallFixtureDef.friction = 0.5f;
 	wallupper_body->SetUserData("wall");
 	wallupper_body->CreateFixture(&WallFixtureDef);
 	wallupper_body->SetTransform(b2Vec2(x / SCALE, y / SCALE), 0);
@@ -50,8 +50,8 @@ void ServerGame::init()
 	WallShape1.SetAsBox((w / 2) / SCALE, (h / 2) / SCALE);
 	b2FixtureDef WallFixtureDef1;
 	WallFixtureDef1.shape = &WallShape1;
-	WallFixtureDef1.restitution = 0.f;;
-	WallFixtureDef1.friction = 1.f;
+	WallFixtureDef1.restitution = 0.2f;;
+	WallFixtureDef1.friction = 0.5f;
 	wallupper_body1->SetUserData("wall");
 	wallupper_body1->CreateFixture(&WallFixtureDef1);
 	wallupper_body1->SetTransform(b2Vec2(x / SCALE, y / SCALE), 0);
@@ -70,8 +70,8 @@ void ServerGame::init()
 	WallShape2.SetAsBox((w / 2) / SCALE, (h / 2) / SCALE);
 	b2FixtureDef WallFixtureDef2;
 	WallFixtureDef2.shape = &WallShape2;
-	WallFixtureDef2.restitution = 0.f;;
-	WallFixtureDef2.friction = 1.f;
+	WallFixtureDef2.restitution = 0.2f;;
+	WallFixtureDef2.friction = 0.5f;
 	wallupper_body2->SetUserData("wall");
 	wallupper_body2->CreateFixture(&WallFixtureDef2);
 	wallupper_body2->SetTransform(b2Vec2(x / SCALE, y / SCALE), 0);
@@ -90,8 +90,8 @@ void ServerGame::init()
 	WallShape3.SetAsBox((w / 2) / SCALE, (h / 2) / SCALE);
 	b2FixtureDef WallFixtureDef3;
 	WallFixtureDef3.shape = &WallShape3;
-	WallFixtureDef3.restitution = 0.f;;
-	WallFixtureDef3.friction = 1.f;
+	WallFixtureDef3.restitution = 0.2f;;
+	WallFixtureDef3.friction = 0.5f;
 	wallupper_body3->SetUserData("wall");
 	wallupper_body3->CreateFixture(&WallFixtureDef3);
 	wallupper_body3->SetTransform(b2Vec2(x / SCALE, y / SCALE), 0);
@@ -216,7 +216,7 @@ void ServerGame::init()
 	circleShape.m_radius = 20.f / SCALE;
 	b2FixtureDef FixtureDefCircle;
 	FixtureDefCircle.density = 0.1f;
-	FixtureDefCircle.friction = 0.0f;
+	FixtureDefCircle.friction = 0.01f;
 	FixtureDefCircle.restitution = 0.5f;
 	FixtureDefCircle.shape = &circleShape;
 	ball_body->SetUserData("ball");

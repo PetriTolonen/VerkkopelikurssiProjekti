@@ -72,13 +72,13 @@ MainMenu::menu_result MainMenu::get_menu_response(sf::RenderWindow* win, sf::Spr
 				if (AspectX < AspectY)
 				{
 					//Resize Y To Fit
-					sf::Vector2u tempSize = sf::Vector2u(win->getSize().x, (int)(AspectX * 1080));
+					sf::Vector2u tempSize = sf::Vector2u(win->getSize().x, (int)(AspectX * 720));
 					win->setSize(tempSize);
 				}
 				else if (AspectX > AspectY)
 				{
 					//Resize X To Fit
-					sf::Vector2u tempSize = sf::Vector2u((int)(AspectY * 1920), win->getSize().y);
+					sf::Vector2u tempSize = sf::Vector2u((int)(AspectY * 1280), win->getSize().y);
 					win->setSize(tempSize);
 				}
 			}
@@ -88,7 +88,7 @@ MainMenu::menu_result MainMenu::get_menu_response(sf::RenderWindow* win, sf::Spr
 
 			if (menu_event.type == sf::Event::MouseButtonPressed)
 			{
-				return handle_click(menu_event.mouseButton.x, menu_event.mouseButton.y);
+				//return handle_click(menu_event.mouseButton.x, menu_event.mouseButton.y);
 			}
 			if (menu_event.type == sf::Event::Closed)
 			{
@@ -99,6 +99,10 @@ MainMenu::menu_result MainMenu::get_menu_response(sf::RenderWindow* win, sf::Spr
 				if (menu_event.key.code == sf::Keyboard::Return)
 				{
 					return play;
+				}
+				if (menu_event.key.code == sf::Keyboard::Escape)
+				{
+					return exit;
 				}
 			}
 		}

@@ -26,9 +26,6 @@ void Game::run()
 	begin_of_game = 0;
 	_game_state = Game::showing_splash;
 
-	//---after_death_timer---//
-	time_passed_after_death = 60 * 10;
-
 	//----Scale
 	SCALE = 40.f;
 
@@ -175,17 +172,6 @@ void Game::gameloop(sf::RenderWindow *window, sf::View *view, MainMenu *main_men
 		if (event.type == sf::Event::KeyPressed)
 		{
 			if (event.key.code == sf::Keyboard::Escape) show_menu(window);
-		}
-
-		//---wait_before_final_gameover---//
-		if (player->get_health() <= 0)
-		{
-			time_passed_after_death--;
-
-			if (time_passed_after_death <= 0)
-			{
-				show_game_over(window);
-			}
 		}
 	}
 	

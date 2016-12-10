@@ -55,11 +55,6 @@ private:
 	};
 	static game_state _game_state;
 
-	int time_passed_after_death;
-
-	int level_move_count;
-	int modulo_int;
-
 	//----Init
 	Player *player;
 	Player *player1;
@@ -72,7 +67,5 @@ private:
 	bool running = false;
 
 	sf::Font font;
-
-	sf::Texture tolppaTexture;
 };
 #endif
